@@ -82,7 +82,7 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
     const drawAnnotations = () => {
       if (!showComparison) return setBracketAnnotations(chart, []);
       const comparisons = [{ previousIndex, currentIndex: latestIndex, previousValue: totals[previousIndex], currentValue: totals[latestIndex], label: yoyText(latestYoy), level: 1, targetGap: 28 }];
-      if (kind === "total") comparisons.push({ previousIndex, currentIndex: latestIndex, previousValue: Number(baseValues[previousIndex]), currentValue: Number(baseValues[latestIndex]), label: yoyText(baseYoy), level: 0, targetGap: 10 });
+      if (kind === "total") comparisons.push({ previousIndex, currentIndex: latestIndex, previousValue: Number(baseValues[previousIndex]), currentValue: Number(baseValues[latestIndex]), label: yoyText(baseYoy), level: 0, targetGap: 0, variant: "difference" as const });
       setBracketAnnotations(chart, comparisons);
     };
     requestAnimationFrame(drawAnnotations);
@@ -103,7 +103,7 @@ export function HorizontalDramaTrend() {
   const body = `26Q2 长剧有效播放 411 亿，同比 ${pct(totalYoy)}；其中热播剧 TOP50 播放 152 亿，同比 ${pct(newYoy)}。分平台 TOP50 上新长剧播放 152 亿，同比 -15%；腾讯、优酷分别下降 ${Math.abs(platformYoys["腾讯视频"]!).toFixed(0)}%、${Math.abs(platformYoys["优酷"]!).toFixed(0)}%，爱奇艺增长 ${platformYoys["爱奇艺"]!.toFixed(0)}%，芒果TV从 5 亿增至 13 亿。`;
   return (
     <section className="horizontal-drama-trend">
-      <div className="horizontal-drama-subhead"><span>01</span><h4>大盘趋势</h4></div>
+      <div className="horizontal-drama-subhead"><span>01</span><h4>横屏长剧大盘趋势</h4></div>
       <EditableInsight lead="长剧播放继续下滑，热播剧也在跌" body={body} highlights={["411 亿", pct(totalYoy), "152 亿", pct(newYoy), "下降 16%、52%", "增长 3%", "5 亿增至 13 亿"]} storageKey="ogv-market-review:26q2:horizontal-drama-trend-v2" />
       <div className="horizontal-drama-quarter-filter" aria-label="选择季度">
         <span>显示季度</span>
@@ -114,7 +114,7 @@ export function HorizontalDramaTrend() {
         ))}
       </div>
       <div className="horizontal-drama-charts">
-        <article className="horizontal-drama-panel"><header><h5>byQ 长剧有效播放（亿）</h5></header><StackedChart kind="total" quarterFilter={quarterFilter} /></article>
+        <article className="horizontal-drama-panel"><header><h5>byQ 有效播放（亿）</h5></header><StackedChart kind="total" quarterFilter={quarterFilter} /></article>
         <article className="horizontal-drama-panel"><header><h5>byQ 分平台 TOP50 上新长剧播放（亿）</h5></header><StackedChart kind="platform" quarterFilter={quarterFilter} /></article>
       </div>
       <p className="horizontal-drama-source">数据来源：{data.source}</p>

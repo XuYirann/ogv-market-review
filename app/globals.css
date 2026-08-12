@@ -181,6 +181,8 @@ a { color: inherit; text-decoration: none; }
 .category-thesis { display: flex; align-items: baseline; gap: 18px; padding: 28px 0 24px; border-top: 2px solid var(--ink); }
 .category-thesis span { color: var(--accent); font: 700 16px/1 ui-monospace, monospace; }
 .category-thesis h3 { margin: 0; font-size: clamp(28px, 3.4vw, 42px); line-height: 1.1; letter-spacing: -.045em; }
+#category-horizontal-drama .category-thesis span { font-size: 20px; }
+#category-horizontal-drama .category-thesis h3 { font-size: 25px; letter-spacing: -.03em; }
 .category-flow { counter-reset: category-step; }
 .category-module { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .7fr); gap: 50px; min-height: 168px; align-items: center; padding: 30px 42px; border-top: 1px solid var(--line); background: #f9faf7; }
 .category-module-heading { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 12px; }
@@ -212,9 +214,10 @@ a { color: inherit; text-decoration: none; }
 .horizontal-drama-chart { width: 100%; height: 390px; }
 .horizontal-drama-source { margin: 10px 0 0; color: var(--muted); font-size: 10px; }
 .horizontal-drama-efficiency { padding-top: 76px; }
-.efficiency-layout { display: grid; grid-template-columns: 1.08fr .96fr .96fr; gap: 16px; margin-top: 22px; }
-.efficiency-chart { width: 100%; height: 320px; }
-.efficiency-chart-large { height: 320px; }
+.efficiency-layout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(360px, .95fr); gap: 18px; margin-top: 22px; }
+.efficiency-side { display: grid; gap: 16px; }
+.efficiency-chart { width: 100%; height: 280px; }
+.efficiency-chart-large { height: 654px; }
 footer { display: flex; justify-content: space-between; gap: 30px; padding: 32px 0 40px; border-top: 1px solid var(--ink); color: var(--muted); font-size: 11px; }
 footer p { margin: 0; }
 
@@ -240,6 +243,7 @@ footer p { margin: 0; }
   .category-module { grid-template-columns: 1fr; gap: 22px; }
   .horizontal-drama-charts { grid-template-columns: 1fr; }
   .efficiency-layout { grid-template-columns: 1fr; }
+  .efficiency-side { grid-template-columns: 1fr; }
   .efficiency-chart-large { height: 430px; }
   .horizontal-drama-quarter-filter { position: static; margin: 16px 0 0; }
   footer { flex-direction: column; }
