@@ -26,10 +26,7 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
     const indexes = source.periods
       .map((period, index) => ({ period, index }))
       .filter(({ period }) => Number(period.slice(0, 2)) >= 22 && (quarterFilter === "all" || period.endsWith(quarterFilter)));
-    let displaySeries = source.series.map((item) => ({
-      ...item,
-      name: kind === "total" ? (item.name === "老剧" ? "其他" : "热播剧 TOP50") : item.name,
-    }));
+    let displaySeries = source.series.map((item) => ({ ...item }));
     if (kind === "total") displaySeries = [displaySeries[1], displaySeries[0]];
     return {
       periods: indexes.map(({ period }) => period),
@@ -48,7 +45,7 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
       color: series.map((item) => colors[item.name]),
       grid: { left: 48, right: 28, top: 62, bottom: 68 },
       tooltip: { show: false },
-      legend: { bottom: 12, itemWidth: 10, itemHeight: 10, textStyle: { color: "#58615b", fontSize: 10 } },
+      legend: { bottom: 12, data: series.map((item) => item.name), itemWidth: 10, itemHeight: 10, textStyle: { color: "#58615b", fontSize: 10 } },
       xAxis: { type: "category", data: periods, axisTick: { show: false }, axisLine: { lineStyle: { color: "#aeb7b0" } }, axisLabel: { color: "#737c76", fontSize: 10, interval: quarterFilter === "all" ? 3 : 0 } },
       yAxis: { type: "value", axisLabel: { color: "#737c76", fontSize: 10 }, splitLine: { lineStyle: { color: "#e4e7e4" } } },
       series: [
@@ -85,14 +82,14 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
 export function HorizontalDramaTrend() {
   const [quarterFilter, setQuarterFilter] = useState<QuarterFilter>("Q2");
   const totalYoy = yoy(data.total.totals);
-  const newYoy = yoy(data.total.series.find((item) => item.name === "上新国产剧")!.values);
+  const newYoy = yoy(data.total.series.find((item) => item.name === "热播剧 TOP50")!.values);
   const platformYoys = Object.fromEntries(data.platform.series.map((item) => [item.name, yoy(item.values)]));
   const pct = (value: number | null) => `${value != null && value > 0 ? "+" : ""}${value?.toFixed(0)}%`;
-  const body = `26Q2 长剧有效播放 411 亿，同比 ${pct(totalYoy)}；其中上新国产剧 152 亿，同比 ${pct(newYoy)}。TOP50 上新长剧播放 152 亿，同比 -15%；腾讯、优酷分别下降 ${Math.abs(platformYoys["腾讯视频"]!).toFixed(0)}%、${Math.abs(platformYoys["优酷"]!).toFixed(0)}%，爱奇艺增长 ${platformYoys["爱奇艺"]!.toFixed(0)}%，芒果TV从 5 亿增至 13 亿。`;
+  const body = `26Q2 长剧有效播放 411 亿，同比 ${pct(totalYoy)}；其中热播剧 TOP50 播放 152 亿，同比 ${pct(newYoy)}。分平台 TOP50 上新长剧播放 152 亿，同比 -15%；腾讯、优酷分别下降 ${Math.abs(platformYoys["腾讯视频"]!).toFixed(0)}%、${Math.abs(platformYoys["优酷"]!).toFixed(0)}%，爱奇艺增长 ${platformYoys["爱奇艺"]!.toFixed(0)}%，芒果TV从 5 亿增至 13 亿。`;
   return (
     <section className="horizontal-drama-trend">
       <div className="horizontal-drama-subhead"><span>01</span><h4>大盘趋势</h4></div>
-      <EditableInsight lead="长剧播放继续下滑，上新剧跌得更多" body={body} highlights={["411 亿", pct(totalYoy), "152 亿", pct(newYoy), "下降 16%、52%", "增长 3%", "5 亿增至 13 亿"]} storageKey="ogv-market-review:26q2:horizontal-drama-trend" />
+      <EditableInsight lead="长剧播放继续下滑，热播剧也在跌" body={body} highlights={["411 亿", pct(totalYoy), "152 亿", pct(newYoy), "下降 16%、52%", "增长 3%", "5 亿增至 13 亿"]} storageKey="ogv-market-review:26q2:horizontal-drama-trend-v2" />
       <div className="horizontal-drama-quarter-filter" aria-label="选择季度">
         <span>显示季度</span>
         {(["Q1", "Q2", "Q3", "Q4", "all"] as const).map((quarter) => (

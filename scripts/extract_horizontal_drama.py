@@ -40,8 +40,8 @@ def main():
         "total": {
             "periods": [row["quarter"] for row in totals],
             "series": [
-                {"name": "老剧", "values": [clean(row.get("老剧")) for row in totals]},
-                {"name": "上新国产剧", "values": [clean(row.get("上新国产剧")) for row in totals]},
+                {"name": "其他", "values": [clean(row.get("其他")) for row in totals]},
+                {"name": "热播剧 TOP50", "values": [clean(row.get("热播剧top50")) for row in totals]},
             ],
             "totals": [clean(row.get("总计")) for row in totals],
         },
@@ -49,7 +49,7 @@ def main():
             "periods": [row["quarter"] for row in platforms],
             "series": [
                 {"name": name, "values": [clean(row.get(name)) for row in platforms]}
-                for name in ["爱奇艺", "腾讯视频", "优酷", "芒果TV", "其他"]
+                for name in ["爱奇艺", "腾讯视频", "优酷", "芒果TV"]
             ],
         },
     }
