@@ -183,8 +183,8 @@ export default function Home() {
         <div className="report">
           <section id="overview" className="hero">
             <div className="hero-copy">
-              <p className="eyebrow">26Q2 OGV MARKET REVIEW</p>
-              <h1>平台大盘</h1>
+              <p className="eyebrow">PART 01</p>
+              <h1><span>01</span>平台大盘</h1>
               <p className="hero-lead">追踪用户、时长、收入与会员，形成可持续更新的季度判断。</p>
             </div>
             <div className="hero-status">

@@ -106,31 +106,15 @@ export function CategoryFramework() {
       <header className="category-intro">
         <div>
           <span>PART 02</span>
-          <h2>分品类市场</h2>
+          <h2><b>02</b>分品类市场</h2>
         </div>
-        <p>统一回答市场变化，再保留每个品类真正不同的内容逻辑。当前先确认结构，数据与结论按模块逐步接入。</p>
       </header>
-
-      <nav className="category-tabs" aria-label="分品类章节快速跳转">
-        {categories.map((item) => (
-          <a
-            key={item.id}
-            href={`#category-${item.id}`}
-          >
-            <small>{item.index}</small>
-            <strong>{item.name}</strong>
-            <span>{item.scope}</span>
-          </a>
-        ))}
-      </nav>
 
       <div className="category-chapters">
         {categories.map((category) => (
           <article className="category-detail" id={`category-${category.id}`} key={category.id}>
             <div className="category-thesis">
-              <span>{category.index} / {category.name}</span>
-              <h3>{category.question}</h3>
-              <p>{category.scope}</p>
+              <h3>{category.name}</h3>
             </div>
 
             <div className="category-flow">
