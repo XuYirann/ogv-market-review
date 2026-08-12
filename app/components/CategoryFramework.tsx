@@ -106,7 +106,7 @@ export function CategoryFramework() {
       <header className="category-intro">
         <div>
           <span>PART 02</span>
-          <h2><b>02</b>分品类市场</h2>
+          <h2>分品类市场</h2>
         </div>
       </header>
 
@@ -114,6 +114,7 @@ export function CategoryFramework() {
         {categories.map((category) => (
           <article className="category-detail" id={`category-${category.id}`} key={category.id}>
             <div className="category-thesis">
+              <span>2.{Number(category.index)}</span>
               <h3>{category.name}</h3>
             </div>
 
