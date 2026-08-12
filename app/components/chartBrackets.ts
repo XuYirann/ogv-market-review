@@ -12,9 +12,10 @@ export type BracketComparison = {
   yAxisIndex?: number;
   xOffset?: number;
   targetGap?: number;
-  variant?: "bracket" | "difference" | "sideLabel";
+  variant?: "bracket" | "difference" | "sideLabel" | "barCallout";
   labelFontSize?: number;
   labelYShift?: number;
+  labelY?: number;
   arrowOffset?: number;
   title?: string;
   swatchColor?: string;
@@ -43,7 +44,7 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
     const bubbleWidth = Math.max(36, item.label.length * (labelFontSize * .92) + 14);
     if (item.variant === "sideLabel") {
       const labelX = chart.getWidth() - 102;
-      const labelY = current[1] + (item.labelYShift ?? 0);
+      const labelY = item.labelY ?? current[1] + (item.labelYShift ?? 0);
       graphics.push({
         id: `comparison-${index}`,
         type: "group",
@@ -54,6 +55,24 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
           { type: "rect", shape: { x: labelX, y: labelY - 14, width: 9, height: 9 }, style: { fill: item.swatchColor ?? color } },
           { type: "text", style: { x: labelX + 16, y: labelY - 10, text: item.title ?? "", fill: item.swatchColor ?? "#33403a", font: "600 9px sans-serif", textAlign: "left", textVerticalAlign: "middle" } },
           { type: "text", style: { x: labelX + 16, y: labelY + 7, text: item.label, fill: "#c74337", font: `600 ${labelFontSize}px sans-serif`, textAlign: "left", textVerticalAlign: "middle" } },
+        ],
+      });
+      return;
+    }
+    if (item.variant === "barCallout") {
+      const labelY = current[1] + (item.labelYShift ?? 0);
+      const barEdgeX = current[0] + 18;
+      const elbowX = current[0] + (item.arrowOffset ?? 25);
+      const labelX = elbowX + 5;
+      graphics.push({
+        id: `comparison-${index}`,
+        type: "group",
+        silent: true,
+        zlevel: 100,
+        z: 100,
+        children: [
+          { type: "polyline", shape: { points: [[barEdgeX, current[1]], [elbowX, current[1]], [elbowX, labelY], [labelX - 2, labelY]] }, style: { stroke: color, lineWidth: 1, fill: "none" } },
+          { type: "text", style: { x: labelX, y: labelY, text: item.label, fill: "#263038", font: `500 ${labelFontSize}px sans-serif`, lineHeight: labelFontSize + 2, textAlign: "left", textVerticalAlign: "middle" } },
         ],
       });
       return;

@@ -49,7 +49,7 @@ function ShortDramaChart({ kind, filter }: { kind: "total" | "platform"; filter:
     chart.setOption({
       animationDuration: 420,
       color: view.series.map((item) => colors[item.name]),
-      grid: { left: 46, right: kind === "total" ? 108 : 132, top: 62, bottom: 46 },
+      grid: { left: 46, right: kind === "total" ? 96 : 152, top: 62, bottom: 46 },
       tooltip: { show: false },
       legend: { show: kind === "total", bottom: 6, data: view.series.map((item) => item.name), itemWidth: 10, itemHeight: 10, textStyle: { color: "#58615b", fontSize: 10 } },
       xAxis: { type: "category", data: view.periods, axisTick: { show: false }, axisLine: { lineStyle: { color: "#aeb7b0" } }, axisLabel: { color: "#737c76", fontSize: 10, interval: filter === "all" ? 3 : 0 } },
@@ -69,6 +69,7 @@ function ShortDramaChart({ kind, filter }: { kind: "total" | "platform"; filter:
             fontSize: filter === "all" ? 8 : 10,
             formatter: ({ value, dataIndex }: { value: number | null; dataIndex: number }) => {
               if (value == null || Math.abs(value) < .08) return "";
+              if (kind === "platform" && (item.name === "优酷" || item.name === "芒果TV")) return "";
               const share = totals[dataIndex] ? Number(value) / totals[dataIndex] * 100 : 0;
               return kind === "total" ? Number(value).toFixed(1) : `${Number(value).toFixed(1)}\n(${share.toFixed(0)}%)`;
             },
@@ -99,12 +100,16 @@ function ShortDramaChart({ kind, filter }: { kind: "total" | "platform"; filter:
       }
 
       let lower = 0;
-      const comparisons = view.series.map((item, index) => {
+      const seriesByLegendOrder = ["芒果TV", "优酷", "腾讯视频", "爱奇艺"]
+        .map((name) => view.series.find((item) => item.name === name))
+        .filter((item): item is (typeof view.series)[number] => Boolean(item));
+      const legendRows = [92, 157, 232, 307];
+      const comparisons = seriesByLegendOrder.map((item, index) => {
         const current = Number(item.values[latestIndex] ?? 0);
         const previous = Number(item.values[previousIndex] ?? 0);
+        const sourceIndex = view.series.findIndex((series) => series.name === item.name);
+        lower = view.series.slice(0, sourceIndex).reduce((sum, series) => sum + Number(series.values[latestIndex] ?? 0), 0);
         const center = lower + current / 2;
-        lower += current;
-        const shifts: Record<string, number> = { 芒果TV: 18, 优酷: -14 };
         return {
           previousIndex,
           currentIndex: latestIndex,
@@ -115,8 +120,31 @@ function ShortDramaChart({ kind, filter }: { kind: "total" | "platform"; filter:
           title: item.name,
           swatchColor: colors[item.name],
           labelFontSize: 8,
-          labelYShift: shifts[item.name] ?? 0,
+          labelY: legendRows[index],
         };
+      });
+      view.periods.forEach((_, dataIndex) => {
+        let cumulative = 0;
+        const smallSegments = view.series.flatMap((item) => {
+          const value = Number(item.values[dataIndex] ?? 0);
+          const center = cumulative + value / 2;
+          cumulative += value;
+          if ((item.name !== "优酷" && item.name !== "芒果TV") || value < .08) return [];
+          const share = totals[dataIndex] ? value / totals[dataIndex] * 100 : 0;
+          return [{ item, value, center, share }];
+        }).sort((a, b) => b.center - a.center);
+        smallSegments.forEach((segment, index) => comparisons.push({
+          previousIndex: dataIndex,
+          currentIndex: dataIndex,
+          previousValue: segment.center,
+          currentValue: segment.center,
+          label: `${segment.value.toFixed(1)}\n(${segment.share.toFixed(0)}%)`,
+          variant: "barCallout",
+          color: colors[segment.item.name],
+          labelFontSize: filter === "all" ? 7 : 8,
+          labelYShift: index === 0 ? -7 : 8,
+          arrowOffset: 25,
+        }));
       });
       setBracketAnnotations(chart, comparisons);
     };
@@ -150,7 +178,7 @@ export function HorizontalShortDramaTrend({ filter }: { filter: QuarterFilter })
       <div className="horizontal-drama-subhead"><span>03</span><h4>横屏短剧大盘趋势</h4></div>
       <EditableInsight lead="短剧大盘回升，但上新增长有限，平台分化明显" body={body} highlights={[model.total.totals[currentIndex]!.toFixed(1) + " 亿", pct(totalYoy), Number(newSeries.values[currentIndex]).toFixed(1) + " 亿", pct(newYoy), pct(otherYoy), platformTotal.toFixed(1) + " 亿", pct(platformYoy), pct(platformChanges["爱奇艺"]), pct(platformChanges["腾讯视频"]), pct(platformChanges["优酷"])]} storageKey="ogv-market-review:26q2:horizontal-short-drama" />
     </div>
-    <div className="horizontal-drama-charts">
+    <div className="horizontal-drama-charts short-drama-charts">
       <article className="horizontal-drama-panel"><header><h5>byQ 横屏短剧有效播放（亿）</h5></header><ShortDramaChart kind="total" filter={filter} /></article>
       <article className="horizontal-drama-panel"><header><h5>byQ 分平台 TOP50 上新横屏短剧播放（亿）</h5></header><ShortDramaChart kind="platform" filter={filter} /></article>
     </div>
