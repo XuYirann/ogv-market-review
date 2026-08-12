@@ -35,23 +35,25 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
     const midX = (previous[0] + current[0]) / 2;
     const bubbleWidth = Math.max(42, item.label.length * 8 + 16);
     if (item.variant === "difference") {
+      const arrowX = current[0] + 18;
+      const bubbleX = arrowX + 12;
       const descending = current[1] > previous[1];
       const arrowY = current[1] - 3;
       const labelY = (previous[1] + current[1]) / 2;
       const arrowPoints = descending
-        ? [[current[0] - 4, arrowY - 7], [current[0] + 4, arrowY - 7], [current[0], arrowY]]
-        : [[current[0] - 4, arrowY + 7], [current[0] + 4, arrowY + 7], [current[0], arrowY]];
+        ? [[arrowX - 4, arrowY - 7], [arrowX + 4, arrowY - 7], [arrowX, arrowY]]
+        : [[arrowX - 4, arrowY + 7], [arrowX + 4, arrowY + 7], [arrowX, arrowY]];
       graphics.push({
         id: `comparison-${index}`,
         type: "group",
         silent: true,
         z: 100,
         children: [
-          { type: "line", shape: { x1: previous[0], y1: previous[1], x2: current[0], y2: previous[1] }, style: { stroke: "#68716b", lineWidth: 1.2, lineDash: [4, 3] } },
-          { type: "line", shape: { x1: current[0], y1: previous[1], x2: current[0], y2: arrowY }, style: { stroke: "#c74337", lineWidth: 1.8 } },
+          { type: "line", shape: { x1: previous[0], y1: previous[1], x2: arrowX, y2: previous[1] }, style: { stroke: "#68716b", lineWidth: 1.2, lineDash: [4, 3] } },
+          { type: "line", shape: { x1: arrowX, y1: previous[1], x2: arrowX, y2: arrowY }, style: { stroke: "#c74337", lineWidth: 1.8 } },
           { type: "polygon", shape: { points: arrowPoints }, style: { fill: "#c74337" } },
-          { type: "rect", shape: { x: current[0] + 10, y: labelY - 11, width: bubbleWidth, height: 22, r: 11 }, style: { fill: "#fbfcf9", stroke: "#c9ceca", lineWidth: 1 } },
-          { type: "text", style: { x: current[0] + 10 + bubbleWidth / 2, y: labelY, text: item.label, fill: "#c74337", font: "600 10px sans-serif", textAlign: "center", textVerticalAlign: "middle" } },
+          { type: "rect", shape: { x: bubbleX, y: labelY - 11, width: bubbleWidth, height: 22, r: 11 }, style: { fill: "#fbfcf9", stroke: "#c9ceca", lineWidth: 1 } },
+          { type: "text", style: { x: bubbleX + bubbleWidth / 2, y: labelY, text: item.label, fill: "#c74337", font: "600 10px sans-serif", textAlign: "center", textVerticalAlign: "middle" } },
         ],
       });
       return;

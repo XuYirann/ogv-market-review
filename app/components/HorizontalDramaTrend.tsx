@@ -50,7 +50,7 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
     chart.setOption({
       animationDuration: 420,
       color: series.map((item) => colors[item.name]),
-      grid: { left: 48, right: 28, top: 62, bottom: 68 },
+      grid: { left: 48, right: kind === "total" ? 86 : 28, top: 62, bottom: 68 },
       tooltip: { show: false },
       legend: { bottom: 12, data: series.map((item) => item.name), itemWidth: 10, itemHeight: 10, textStyle: { color: "#58615b", fontSize: 10 } },
       xAxis: { type: "category", data: periods, axisTick: { show: false }, axisLine: { lineStyle: { color: "#aeb7b0" } }, axisLabel: { color: "#737c76", fontSize: 10, interval: quarterFilter === "all" ? 3 : 0 } },
