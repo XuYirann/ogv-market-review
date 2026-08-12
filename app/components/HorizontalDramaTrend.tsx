@@ -81,8 +81,8 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
     });
     const drawAnnotations = () => {
       if (!showComparison) return setBracketAnnotations(chart, []);
-      const comparisons = [{ previousIndex, currentIndex: latestIndex, previousValue: totals[previousIndex], currentValue: totals[latestIndex], label: yoyText(latestYoy), level: 1 }];
-      if (kind === "total") comparisons.push({ previousIndex, currentIndex: latestIndex, previousValue: Number(baseValues[previousIndex]), currentValue: Number(baseValues[latestIndex]), label: yoyText(baseYoy), level: 0 });
+      const comparisons = [{ previousIndex, currentIndex: latestIndex, previousValue: totals[previousIndex], currentValue: totals[latestIndex], label: yoyText(latestYoy), level: 1, targetGap: 28 }];
+      if (kind === "total") comparisons.push({ previousIndex, currentIndex: latestIndex, previousValue: Number(baseValues[previousIndex]), currentValue: Number(baseValues[latestIndex]), label: yoyText(baseYoy), level: 0, targetGap: 10 });
       setBracketAnnotations(chart, comparisons);
     };
     requestAnimationFrame(drawAnnotations);

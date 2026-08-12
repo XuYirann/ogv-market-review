@@ -10,6 +10,8 @@ export type BracketComparison = {
   level?: number;
   xAxisIndex?: number;
   yAxisIndex?: number;
+  xOffset?: number;
+  targetGap?: number;
 };
 
 export function setBracketAnnotations(chart: echarts.ECharts, comparisons: BracketComparison[]) {
@@ -21,8 +23,14 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
     const current = chart.convertToPixel({ xAxisIndex, yAxisIndex }, [item.currentIndex, item.currentValue]);
     if (!Array.isArray(previous) || !Array.isArray(current) || previous.some(Number.isNaN) || current.some(Number.isNaN)) return;
     const color = item.color ?? "#aeb5b0";
-    const lift = 28 + (item.level ?? 0) * 22;
-    const topY = Math.min(previous[1], current[1]) - lift;
+    const xOffset = item.xOffset ?? 0;
+    const targetGap = item.targetGap ?? 20;
+    previous[0] += xOffset;
+    current[0] += xOffset;
+    const lift = 24 + (item.level ?? 0) * 22;
+    const topY = Math.min(previous[1], current[1]) - targetGap - lift;
+    const previousEndY = previous[1] - targetGap;
+    const currentEndY = current[1] - targetGap;
     const midX = (previous[0] + current[0]) / 2;
     const bubbleWidth = Math.max(42, item.label.length * 8 + 16);
     graphics.push({
@@ -31,8 +39,8 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
       silent: true,
       z: 100,
       children: [
-        { type: "polyline", shape: { points: [[previous[0], previous[1] - 7], [previous[0], topY], [current[0], topY], [current[0], current[1] - 7]] }, style: { stroke: color, lineWidth: 1.25, fill: "none" } },
-        { type: "polygon", shape: { points: [[current[0] - 4, current[1] - 11], [current[0] + 4, current[1] - 11], [current[0], current[1] - 4]] }, style: { fill: color } },
+        { type: "polyline", shape: { points: [[previous[0], previousEndY], [previous[0], topY], [current[0], topY], [current[0], currentEndY - 4]] }, style: { stroke: color, lineWidth: 1.25, fill: "none" } },
+        { type: "polygon", shape: { points: [[current[0] - 4, currentEndY - 8], [current[0] + 4, currentEndY - 8], [current[0], currentEndY - 1]] }, style: { fill: color } },
         { type: "rect", shape: { x: midX - bubbleWidth / 2, y: topY - 11, width: bubbleWidth, height: 22, r: 11 }, style: { fill: "#fbfcf9", stroke: "#c9ceca", lineWidth: 1 } },
         { type: "text", style: { x: midX, y: topY, text: item.label, fill: "#c74337", font: "600 10px sans-serif", textAlign: "center", textVerticalAlign: "middle" } },
       ],

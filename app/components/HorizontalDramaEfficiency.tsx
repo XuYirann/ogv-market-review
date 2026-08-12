@@ -26,7 +26,7 @@ function ConcentrationChart({ filter }: { filter: QuarterFilter }) {
   useEffect(() => {
     if (!ref.current) return;
     const chart = echarts.init(ref.current); const n = model.periods.length; const compare = filter !== "all" && n > 1;
-    chart.setOption({ animationDuration: 420, grid: { left: 46, right: 38, top: 66, bottom: 64 }, tooltip: { show: false },
+    chart.setOption({ animationDuration: 420, grid: { left: 40, right: 22, top: 108, bottom: 58 }, tooltip: { show: false },
       legend: { bottom: 12, data: ["TOP10", "11–50"], itemWidth: 10, itemHeight: 10 },
       xAxis: { type: "category", data: model.periods, axisTick: { show: false }, axisLabel: { interval: filter === "all" ? 3 : 0, fontSize: 10 }, axisLine: { lineStyle: { color: "#aeb7b0" } } },
       yAxis: { type: "value", axisLabel: { fontSize: 10, color: "#737c76" }, splitLine: { lineStyle: { color: "#e4e7e4" } } },
@@ -39,9 +39,9 @@ function ConcentrationChart({ filter }: { filter: QuarterFilter }) {
       const bottom = model.series.find((s) => s.name === "11–50")!;
       const top = model.series.find((s) => s.name === "TOP10")!;
       setBracketAnnotations(chart, [
-        { previousIndex: n-2, currentIndex: n-1, previousValue: model.totals[n-2], currentValue: model.totals[n-1], label: `总计 ${pct(yoy(model.totals[n-1], model.totals[n-2]))}`, level: 2 },
-        { previousIndex: n-2, currentIndex: n-1, previousValue: Number(bottom.values[n-2]), currentValue: Number(bottom.values[n-1]), label: `11–50 ${pct(yoy(Number(bottom.values[n-1]), Number(bottom.values[n-2])))}`, level: 0, color: "#9aa5ad" },
-        { previousIndex: n-2, currentIndex: n-1, previousValue: Number(top.values[n-2]), currentValue: Number(top.values[n-1]), label: `TOP10 ${pct(yoy(Number(top.values[n-1]), Number(top.values[n-2])))}`, level: 1, color: "#788ea8" },
+        { previousIndex: n-2, currentIndex: n-1, previousValue: model.totals[n-2], currentValue: model.totals[n-1], label: `总计 ${pct(yoy(model.totals[n-1], model.totals[n-2]))}`, level: 2, targetGap: 24 },
+        { previousIndex: n-2, currentIndex: n-1, previousValue: Number(bottom.values[n-2]), currentValue: Number(bottom.values[n-1]), label: `11–50 ${pct(yoy(Number(bottom.values[n-1]), Number(bottom.values[n-2])))}`, level: 0, color: "#9aa5ad", targetGap: 8 },
+        { previousIndex: n-2, currentIndex: n-1, previousValue: Number(top.values[n-2]), currentValue: Number(top.values[n-1]), label: `TOP10 ${pct(yoy(Number(top.values[n-1]), Number(top.values[n-2])))}`, level: 1, color: "#788ea8", targetGap: 8 },
       ]);
     };
     requestAnimationFrame(draw);
@@ -54,10 +54,10 @@ function SplitMetricChart({ metric, filter }: { metric: EfficiencyKey; filter: Q
   const ref = useRef<HTMLDivElement>(null); const source = data.efficiency[metric];
   const model = useMemo(() => { const idx = filterIndexes(data.efficiency.periods, filter); return { periods: idx.map((x) => x.period), series: source.series.map((s) => ({ ...s, values: idx.map((x) => s.values[x.index]) })) }; }, [filter, source]);
   useEffect(() => { if (!ref.current) return; const chart = echarts.init(ref.current); const n = model.periods.length;
-    chart.setOption({ animationDuration: 420, grid: [{ left: 38, right: "54%", top: 44, bottom: 55 }, { left: "55%", right: 20, top: 44, bottom: 55 }], tooltip: { show: false }, legend: { bottom: 8, data: ["TOP10", "11–50"], itemWidth: 10, itemHeight: 10 },
-      xAxis: model.series.map((_, i) => ({ type: "category", gridIndex: i, data: model.periods, axisTick: { show: false }, axisLabel: { interval: filter === "all" ? 3 : 0, fontSize: 9 }, axisLine: { lineStyle: { color: "#aeb7b0" } } })), yAxis: model.series.map((_, i) => ({ type: "value", gridIndex: i, axisLabel: { fontSize: 9 }, splitLine: { lineStyle: { color: "#e4e7e4" } } })),
-      series: model.series.map((s, i) => ({ name: s.name, type: "bar", xAxisIndex: i, yAxisIndex: i, data: s.values, barMaxWidth: 26, itemStyle: { color: colors[s.name as keyof typeof colors] }, label: { show: true, position: "top", fontSize: 9, formatter: ({ value }: { value: number }) => metric === "episodes" ? value.toFixed(0) : value.toLocaleString(undefined, { maximumFractionDigits: 0 }) } })) });
-    const draw = () => setBracketAnnotations(chart, filter !== "all" && n > 1 ? model.series.map((s, i) => ({ previousIndex: n-2, currentIndex: n-1, previousValue: Number(s.values[n-2]), currentValue: Number(s.values[n-1]), label: pct(yoy(Number(s.values[n-1]), Number(s.values[n-2]))), xAxisIndex: i, yAxisIndex: i })) : []);
+    chart.setOption({ animationDuration: 420, grid: { left: 44, right: 18, top: 82, bottom: 58 }, tooltip: { show: false }, legend: { bottom: 10, data: ["TOP10", "11–50"], itemWidth: 10, itemHeight: 10 },
+      xAxis: { type: "category", data: model.periods, axisTick: { show: false }, axisLabel: { interval: filter === "all" ? 3 : 0, fontSize: 9 }, axisLine: { lineStyle: { color: "#aeb7b0" } } }, yAxis: { type: "value", axisLabel: { fontSize: 9, color: "#737c76" }, splitLine: { lineStyle: { color: "#e4e7e4" } } },
+      series: model.series.map((s) => ({ name: s.name, type: "bar", data: s.values, barMaxWidth: 20, barGap: "20%", itemStyle: { color: colors[s.name as keyof typeof colors] }, label: { show: true, position: "top", fontSize: 9, formatter: ({ value }: { value: number }) => metric === "episodes" ? value.toFixed(0) : value.toLocaleString(undefined, { maximumFractionDigits: 0 }) } })) });
+    const draw = () => setBracketAnnotations(chart, filter !== "all" && n > 1 ? model.series.map((s, i) => ({ previousIndex: n-2, currentIndex: n-1, previousValue: Number(s.values[n-2]), currentValue: Number(s.values[n-1]), label: pct(yoy(Number(s.values[n-1]), Number(s.values[n-2]))), xOffset: i === 0 ? -7 : 7, level: i, targetGap: 12 })) : []);
     requestAnimationFrame(draw);
     const ro = new ResizeObserver(() => { chart.resize(); requestAnimationFrame(draw); }); ro.observe(ref.current); return () => { ro.disconnect(); chart.dispose(); };
   }, [filter, metric, model]);
@@ -67,6 +67,6 @@ function SplitMetricChart({ metric, filter }: { metric: EfficiencyKey; filter: Q
 export function HorizontalDramaEfficiency({ filter }: { filter: QuarterFilter }) {
   return <section className="horizontal-drama-efficiency"><div className="horizontal-drama-subhead"><span>02</span><h4>内容效率</h4></div>
     <EditableInsight lead="腰尾部播放跌得更多，头部单剧效率也在下降" body="26Q2 TOP50 上新长剧播放 152 亿，同比下降 15%；TOP10 下降 5%，11–50 下降 24%。平均集数基本没变，但 TOP10 集均 V30 下降 20%，说明头部内容的单剧效率也明显下滑；11–50 集均 V30 仍维持低位。" highlights={["152 亿", "下降 15%", "下降 5%", "下降 24%", "下降 20%", "维持低位"]} storageKey="ogv-market-review:26q2:horizontal-drama-efficiency" />
-    <div className="efficiency-layout"><article className="horizontal-drama-panel"><header><h5>by集中度 TOP50 上新长剧播放（亿）</h5></header><ConcentrationChart filter={filter} /></article><div className="efficiency-side"><article className="horizontal-drama-panel"><header><h5>TOP50 上新长剧平均集数</h5></header><SplitMetricChart metric="episodes" filter={filter} /></article><article className="horizontal-drama-panel"><header><h5>TOP50 上新长剧集均 V30（万）</h5></header><SplitMetricChart metric="v30" filter={filter} /></article></div></div>
+    <div className="efficiency-layout"><article className="horizontal-drama-panel"><header><h5>by集中度 TOP50 上新长剧播放（亿）</h5></header><ConcentrationChart filter={filter} /></article><article className="horizontal-drama-panel"><header><h5>TOP50 上新长剧平均集数</h5></header><SplitMetricChart metric="episodes" filter={filter} /></article><article className="horizontal-drama-panel"><header><h5>TOP50 上新长剧集均 V30（万）</h5></header><SplitMetricChart metric="v30" filter={filter} /></article></div>
   </section>;
 }
