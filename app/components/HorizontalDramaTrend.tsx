@@ -60,12 +60,12 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
         label: {
           show: true,
           position: "inside" as const,
-          color: item.name === "其他" || item.name === "优酷" ? "#263038" : "#ffffff",
+          color: item.name === "其他" || item.name === "优酷" || item.name === "芒果TV" ? "#263038" : "#ffffff",
           fontSize: quarterFilter === "all" ? 8 : 10,
           formatter: ({ value, dataIndex }: { value: number | null; dataIndex: number }) => {
             if (value == null || Math.abs(value) < .5) return "";
             const share = totals[dataIndex] ? Number(value) / totals[dataIndex] * 100 : 0;
-            return `${Number(value).toFixed(0)}\n(${share.toFixed(0)}%)`;
+            return kind === "total" ? Number(value).toFixed(0) : `${Number(value).toFixed(0)}\n(${share.toFixed(0)}%)`;
           },
         },
         markLine: seriesIndex === 0 && showComparison ? {
@@ -73,7 +73,7 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
           symbol: ["none", "arrow"],
           symbolSize: [0, 8],
           lineStyle: { color: "#c74337", width: 1.5 },
-          label: { show: true, position: "end", color: "#c74337", backgroundColor: "#f9faf7", borderColor: "#c9ceca", borderWidth: 1, borderRadius: 12, padding: [4, 8], formatter: yoyText(baseYoy) },
+          label: { show: true, position: "end", rotate: 0, color: "#c74337", fontSize: 9, backgroundColor: "#f9faf7", borderColor: "#c9ceca", borderWidth: 1, borderRadius: 12, padding: [3, 7], formatter: yoyText(baseYoy) },
           data: [[
             { coord: [periods[previousIndex], Number(baseValues[previousIndex])], symbol: "none" },
             { coord: [periods[latestIndex], Number(baseValues[latestIndex])], symbol: "arrow" },
@@ -90,7 +90,7 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
             symbol: ["none", "arrow"],
             symbolSize: [0, 8],
             lineStyle: { color: "#aeb5b0", width: 1.2 },
-            label: { show: true, position: "middle", color: "#c74337", backgroundColor: "#f9faf7", borderColor: "#c9ceca", borderWidth: 1, borderRadius: 12, padding: [4, 8], formatter: yoyText(latestYoy) },
+            label: { show: true, position: "middle", rotate: 0, color: "#c74337", fontSize: 9, backgroundColor: "#f9faf7", borderColor: "#c9ceca", borderWidth: 1, borderRadius: 12, padding: [3, 7], formatter: yoyText(latestYoy) },
             data: [[
               { coord: [periods[previousIndex], totals[previousIndex]], symbol: "none" },
               { coord: [periods[latestIndex], totals[latestIndex]], symbol: "arrow" },
