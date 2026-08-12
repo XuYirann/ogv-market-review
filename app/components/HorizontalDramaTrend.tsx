@@ -10,7 +10,7 @@ import { HorizontalShortDramaTrend } from "./HorizontalShortDramaTrend";
 
 const colors: Record<string, string> = {
   其他: "#d9dfe8", "热播剧 TOP50": "#385577",
-  爱奇艺: "#78945a", 腾讯视频: "#58749a", 优酷: "#5d9bad", 芒果TV: "#c47b4d", 其他: "#b7beb8",
+  爱奇艺: "#C0D688", 腾讯视频: "#A9BACF", 优酷: "#89D8F0", 芒果TV: "#EDB795", 其他: "#b7beb8",
 };
 
 function yoy(values: (number | null)[]) {
@@ -63,7 +63,7 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
         label: {
           show: true,
           position: "inside" as const,
-          color: item.name === "其他" || item.name === "优酷" || item.name === "芒果TV" ? "#263038" : "#ffffff",
+          color: item.name === "其他" || kind === "platform" ? "#263038" : "#ffffff",
           fontSize: quarterFilter === "all" ? 8 : 10,
           formatter: ({ value, dataIndex }: { value: number | null; dataIndex: number }) => {
             if (value == null || Math.abs(value) < .5) return "";

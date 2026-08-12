@@ -11,10 +11,10 @@ type QuarterFilter = "Q1" | "Q2" | "Q3" | "Q4" | "all";
 const colors: Record<string, string> = {
   上新剧: "#385577",
   其他: "#d9dfe8",
-  爱奇艺: "#78945a",
-  腾讯视频: "#58749a",
-  优酷: "#5d9bad",
-  芒果TV: "#c47b4d",
+  爱奇艺: "#C0D688",
+  腾讯视频: "#A9BACF",
+  优酷: "#89D8F0",
+  芒果TV: "#EDB795",
 };
 
 function yoy(current: number | null | undefined, previous: number | null | undefined) {
@@ -65,7 +65,7 @@ function ShortDramaChart({ kind, filter }: { kind: "total" | "platform"; filter:
           label: {
             show: true,
             position: "inside" as const,
-            color: item.name === "其他" || item.name === "优酷" || item.name === "芒果TV" ? "#263038" : "#fff",
+            color: item.name === "其他" || kind === "platform" ? "#263038" : "#fff",
             fontSize: filter === "all" ? 8 : 10,
             formatter: ({ value, dataIndex }: { value: number | null; dataIndex: number }) => {
               if (value == null || Math.abs(value) < .08) return "";
