@@ -4,6 +4,7 @@ import * as echarts from "echarts";
 import { useEffect, useMemo, useRef } from "react";
 import { EditableInsight } from "./EditableInsight";
 import data from "../data/horizontalDramaTrend.json";
+import { setBracketAnnotations } from "./chartBrackets";
 
 type QuarterFilter = "Q1" | "Q2" | "Q3" | "Q4" | "all";
 type EfficiencyKey = "episodes" | "v30";
@@ -30,11 +31,21 @@ function ConcentrationChart({ filter }: { filter: QuarterFilter }) {
       xAxis: { type: "category", data: model.periods, axisTick: { show: false }, axisLabel: { interval: filter === "all" ? 3 : 0, fontSize: 10 }, axisLine: { lineStyle: { color: "#aeb7b0" } } },
       yAxis: { type: "value", axisLabel: { fontSize: 10, color: "#737c76" }, splitLine: { lineStyle: { color: "#e4e7e4" } } },
       series: [
-        ...model.series.map((s, si) => ({ name: s.name, type: "bar", stack: "total", data: s.values, barMaxWidth: 36, itemStyle: { color: colors[s.name as keyof typeof colors] }, label: { show: true, position: "inside", color: s.name === "TOP10" ? "#fff" : "#263038", fontSize: 9, formatter: ({ value, dataIndex }: { value: number; dataIndex: number }) => `${value.toFixed(0)}\n(${(value / model.totals[dataIndex] * 100).toFixed(0)}%)` },
-          markLine: compare ? { silent: true, symbol: ["none", "arrow"], symbolSize: [0, 7], lineStyle: { color: si ? "#385577" : "#788ea8", width: 1.2 }, label: { rotate: 0, fontSize: 9, color: "#c74337", backgroundColor: "#f9faf7", padding: [3, 6], formatter: pct(yoy(Number(s.values[n-1]), Number(s.values[n-2]))) }, data: [[{ coord: [model.periods[n-2], si ? model.totals[n-2] : s.values[n-2]] }, { coord: [model.periods[n-1], si ? model.totals[n-1] : s.values[n-1]] }]] } : undefined })),
-        { name: "柱顶合计", type: "bar", data: model.totals, barGap: "-100%", barMaxWidth: 36, silent: true, z: 20, itemStyle: { color: "rgba(0,0,0,0)" }, label: { show: true, position: "top", distance: 8, fontWeight: 700, formatter: ({ value }: { value: number }) => value.toFixed(0) }, markLine: compare ? { silent: true, symbol: ["none", "arrow"], symbolSize: [0,7], lineStyle: { color: "#aeb5b0" }, label: { rotate: 0, fontSize: 9, color: "#c74337", backgroundColor: "#f9faf7", padding: [3,6], formatter: pct(yoy(model.totals[n-1], model.totals[n-2])) }, data: [[{ coord: [model.periods[n-2], model.totals[n-2]] }, { coord: [model.periods[n-1], model.totals[n-1]] }]] } : undefined },
+        ...model.series.map((s) => ({ name: s.name, type: "bar", stack: "total", data: s.values, barMaxWidth: 36, itemStyle: { color: colors[s.name as keyof typeof colors] }, label: { show: true, position: "inside", color: s.name === "TOP10" ? "#fff" : "#263038", fontSize: 9, formatter: ({ value, dataIndex }: { value: number; dataIndex: number }) => `${value.toFixed(0)}\n(${(value / model.totals[dataIndex] * 100).toFixed(0)}%)` } })),
+        { name: "柱顶合计", type: "bar", data: model.totals, barGap: "-100%", barMaxWidth: 36, silent: true, z: 20, itemStyle: { color: "rgba(0,0,0,0)" }, label: { show: true, position: "top", distance: 8, fontWeight: 700, formatter: ({ value }: { value: number }) => value.toFixed(0) } },
       ] });
-    const ro = new ResizeObserver(() => chart.resize()); ro.observe(ref.current); return () => { ro.disconnect(); chart.dispose(); };
+    const draw = () => {
+      if (!compare) return setBracketAnnotations(chart, []);
+      const bottom = model.series.find((s) => s.name === "11–50")!;
+      const top = model.series.find((s) => s.name === "TOP10")!;
+      setBracketAnnotations(chart, [
+        { previousIndex: n-2, currentIndex: n-1, previousValue: model.totals[n-2], currentValue: model.totals[n-1], label: `总计 ${pct(yoy(model.totals[n-1], model.totals[n-2]))}`, level: 2 },
+        { previousIndex: n-2, currentIndex: n-1, previousValue: Number(bottom.values[n-2]), currentValue: Number(bottom.values[n-1]), label: `11–50 ${pct(yoy(Number(bottom.values[n-1]), Number(bottom.values[n-2])))}`, level: 0, color: "#9aa5ad" },
+        { previousIndex: n-2, currentIndex: n-1, previousValue: Number(top.values[n-2]), currentValue: Number(top.values[n-1]), label: `TOP10 ${pct(yoy(Number(top.values[n-1]), Number(top.values[n-2])))}`, level: 1, color: "#788ea8" },
+      ]);
+    };
+    requestAnimationFrame(draw);
+    const ro = new ResizeObserver(() => { chart.resize(); requestAnimationFrame(draw); }); ro.observe(ref.current); return () => { ro.disconnect(); chart.dispose(); };
   }, [filter, model]);
   return <div ref={ref} className="efficiency-chart efficiency-chart-large" role="img" aria-label="TOP50上新长剧播放集中度" />;
 }
@@ -45,8 +56,10 @@ function SplitMetricChart({ metric, filter }: { metric: EfficiencyKey; filter: Q
   useEffect(() => { if (!ref.current) return; const chart = echarts.init(ref.current); const n = model.periods.length;
     chart.setOption({ animationDuration: 420, grid: [{ left: 38, right: "54%", top: 44, bottom: 55 }, { left: "55%", right: 20, top: 44, bottom: 55 }], tooltip: { show: false }, legend: { bottom: 8, data: ["TOP10", "11–50"], itemWidth: 10, itemHeight: 10 },
       xAxis: model.series.map((_, i) => ({ type: "category", gridIndex: i, data: model.periods, axisTick: { show: false }, axisLabel: { interval: filter === "all" ? 3 : 0, fontSize: 9 }, axisLine: { lineStyle: { color: "#aeb7b0" } } })), yAxis: model.series.map((_, i) => ({ type: "value", gridIndex: i, axisLabel: { fontSize: 9 }, splitLine: { lineStyle: { color: "#e4e7e4" } } })),
-      series: model.series.map((s, i) => ({ name: s.name, type: "bar", xAxisIndex: i, yAxisIndex: i, data: s.values, barMaxWidth: 26, itemStyle: { color: colors[s.name as keyof typeof colors] }, label: { show: true, position: "top", fontSize: 9, formatter: ({ value }: { value: number }) => metric === "episodes" ? value.toFixed(0) : value.toLocaleString(undefined, { maximumFractionDigits: 0 }) }, markLine: filter !== "all" && n > 1 ? { silent: true, symbol: ["none", "arrow"], label: { rotate: 0, fontSize: 9, color: "#c74337", formatter: pct(yoy(Number(s.values[n-1]), Number(s.values[n-2]))) }, data: [[{ coord: [model.periods[n-2], s.values[n-2]] }, { coord: [model.periods[n-1], s.values[n-1]] }]] } : undefined })) });
-    const ro = new ResizeObserver(() => chart.resize()); ro.observe(ref.current); return () => { ro.disconnect(); chart.dispose(); };
+      series: model.series.map((s, i) => ({ name: s.name, type: "bar", xAxisIndex: i, yAxisIndex: i, data: s.values, barMaxWidth: 26, itemStyle: { color: colors[s.name as keyof typeof colors] }, label: { show: true, position: "top", fontSize: 9, formatter: ({ value }: { value: number }) => metric === "episodes" ? value.toFixed(0) : value.toLocaleString(undefined, { maximumFractionDigits: 0 }) } })) });
+    const draw = () => setBracketAnnotations(chart, filter !== "all" && n > 1 ? model.series.map((s, i) => ({ previousIndex: n-2, currentIndex: n-1, previousValue: Number(s.values[n-2]), currentValue: Number(s.values[n-1]), label: pct(yoy(Number(s.values[n-1]), Number(s.values[n-2]))), xAxisIndex: i, yAxisIndex: i })) : []);
+    requestAnimationFrame(draw);
+    const ro = new ResizeObserver(() => { chart.resize(); requestAnimationFrame(draw); }); ro.observe(ref.current); return () => { ro.disconnect(); chart.dispose(); };
   }, [filter, metric, model]);
   return <div ref={ref} className="efficiency-chart" role="img" aria-label={metric === "episodes" ? "TOP50上新长剧平均集数" : "TOP50上新长剧集均V30"} />;
 }

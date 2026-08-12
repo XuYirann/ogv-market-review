@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { EditableInsight } from "./EditableInsight";
 import data from "../data/horizontalDramaTrend.json";
 import { HorizontalDramaEfficiency } from "./HorizontalDramaEfficiency";
+import { setBracketAnnotations } from "./chartBrackets";
 
 const colors: Record<string, string> = {
   其他: "#d9dfe8", "热播剧 TOP50": "#385577",
@@ -69,38 +70,23 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
             return kind === "total" ? Number(value).toFixed(0) : `${Number(value).toFixed(0)}\n(${share.toFixed(0)}%)`;
           },
         },
-        markLine: seriesIndex === 0 && showComparison ? {
-          silent: true,
-          symbol: ["none", "arrow"],
-          symbolSize: [0, 8],
-          lineStyle: { color: "#c74337", width: 1.5 },
-          label: { show: true, position: "end", rotate: 0, color: "#c74337", fontSize: 9, backgroundColor: "#f9faf7", borderColor: "#c9ceca", borderWidth: 1, borderRadius: 12, padding: [3, 7], formatter: yoyText(baseYoy) },
-          data: [[
-            { coord: [periods[previousIndex], Number(baseValues[previousIndex])], symbol: "none" },
-            { coord: [periods[latestIndex], Number(baseValues[latestIndex])], symbol: "arrow" },
-          ]],
-        } : undefined,
       })),
         {
           name: "柱顶合计", type: "bar" as const, data: totals, barMaxWidth: 36, barGap: "-100%", silent: true, z: 20,
           itemStyle: { color: "rgba(0,0,0,0)" },
           emphasis: { disabled: true },
           label: { show: true, position: "top" as const, distance: 8, color: "#161917", fontSize: 12, fontWeight: 700, formatter: ({ value }: { value: number }) => Number(value).toFixed(0) },
-          markLine: showComparison ? {
-            silent: true,
-            symbol: ["none", "arrow"],
-            symbolSize: [0, 8],
-            lineStyle: { color: "#aeb5b0", width: 1.2 },
-            label: { show: true, position: "middle", rotate: 0, color: "#c74337", fontSize: 9, backgroundColor: "#f9faf7", borderColor: "#c9ceca", borderWidth: 1, borderRadius: 12, padding: [3, 7], formatter: yoyText(latestYoy) },
-            data: [[
-              { coord: [periods[previousIndex], totals[previousIndex]], symbol: "none" },
-              { coord: [periods[latestIndex], totals[latestIndex]], symbol: "arrow" },
-            ]],
-          } : undefined,
         },
       ],
     });
-    const observer = new ResizeObserver(() => chart.resize());
+    const drawAnnotations = () => {
+      if (!showComparison) return setBracketAnnotations(chart, []);
+      const comparisons = [{ previousIndex, currentIndex: latestIndex, previousValue: totals[previousIndex], currentValue: totals[latestIndex], label: yoyText(latestYoy), level: 1 }];
+      if (kind === "total") comparisons.push({ previousIndex, currentIndex: latestIndex, previousValue: Number(baseValues[previousIndex]), currentValue: Number(baseValues[latestIndex]), label: yoyText(baseYoy), level: 0 });
+      setBracketAnnotations(chart, comparisons);
+    };
+    requestAnimationFrame(drawAnnotations);
+    const observer = new ResizeObserver(() => { chart.resize(); requestAnimationFrame(drawAnnotations); });
     observer.observe(chartRef.current);
     return () => { observer.disconnect(); chart.dispose(); };
   }, [periods, series]);
