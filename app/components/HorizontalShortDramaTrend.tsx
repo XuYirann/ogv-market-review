@@ -11,10 +11,10 @@ type QuarterFilter = "Q1" | "Q2" | "Q3" | "Q4" | "all";
 const colors: Record<string, string> = {
   上新剧: "#385577",
   其他: "#d9dfe8",
-  爱奇艺: "#385577",
-  腾讯视频: "#7191bc",
-  优酷: "#b9c5d7",
-  芒果TV: "#ef8b45",
+  爱奇艺: "#7ba900",
+  腾讯视频: "#486b9f",
+  优酷: "#00aee8",
+  芒果TV: "#df661d",
 };
 
 function yoy(current: number | null | undefined, previous: number | null | undefined) {
@@ -178,7 +178,7 @@ export function HorizontalShortDramaTrend({ filter }: { filter: QuarterFilter })
       <div className="horizontal-drama-subhead"><span>03</span><h4>横屏短剧大盘趋势</h4></div>
       <EditableInsight lead="短剧大盘回升，但上新增长有限，平台分化明显" body={body} highlights={[model.total.totals[currentIndex]!.toFixed(1) + " 亿", pct(totalYoy), Number(newSeries.values[currentIndex]).toFixed(1) + " 亿", pct(newYoy), pct(otherYoy), platformTotal.toFixed(1) + " 亿", pct(platformYoy), pct(platformChanges["爱奇艺"]), pct(platformChanges["腾讯视频"]), pct(platformChanges["优酷"])]} storageKey="ogv-market-review:26q2:horizontal-short-drama" />
     </div>
-    <div className="horizontal-drama-charts short-drama-charts">
+    <div className="horizontal-drama-charts asymmetric-platform-charts">
       <article className="horizontal-drama-panel"><header><h5>byQ 横屏短剧有效播放（亿）</h5></header><ShortDramaChart kind="total" filter={filter} /></article>
       <article className="horizontal-drama-panel"><header><h5>byQ 分平台 TOP50 上新横屏短剧播放（亿）</h5></header><ShortDramaChart kind="platform" filter={filter} /></article>
     </div>

@@ -5,12 +5,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { EditableInsight } from "./EditableInsight";
 import data from "../data/horizontalDramaTrend.json";
 import { HorizontalDramaEfficiency } from "./HorizontalDramaEfficiency";
-import { setBracketAnnotations } from "./chartBrackets";
+import { type BracketComparison, setBracketAnnotations } from "./chartBrackets";
 import { HorizontalShortDramaTrend } from "./HorizontalShortDramaTrend";
 
 const colors: Record<string, string> = {
   其他: "#d9dfe8", "热播剧 TOP50": "#385577",
-  爱奇艺: "#385577", 腾讯视频: "#7191bc", 优酷: "#b9c5d7", 芒果TV: "#ef8b45", 其他: "#b7beb8",
+  爱奇艺: "#7ba900", 腾讯视频: "#486b9f", 优酷: "#00aee8", 芒果TV: "#df661d", 其他: "#b7beb8",
 };
 
 function yoy(values: (number | null)[]) {
@@ -51,9 +51,9 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
     chart.setOption({
       animationDuration: 420,
       color: series.map((item) => colors[item.name]),
-      grid: { left: 48, right: kind === "total" ? 102 : 28, top: 62, bottom: 68 },
+      grid: { left: 48, right: kind === "total" ? 102 : 152, top: 62, bottom: 68 },
       tooltip: { show: false },
-      legend: { bottom: 12, data: series.map((item) => item.name), itemWidth: 10, itemHeight: 10, textStyle: { color: "#58615b", fontSize: 10 } },
+      legend: { show: kind === "total", bottom: 12, data: series.map((item) => item.name), itemWidth: 10, itemHeight: 10, textStyle: { color: "#58615b", fontSize: 10 } },
       xAxis: { type: "category", data: periods, axisTick: { show: false }, axisLine: { lineStyle: { color: "#aeb7b0" } }, axisLabel: { color: "#737c76", fontSize: 10, interval: quarterFilter === "all" ? 3 : 0 } },
       yAxis: { type: "value", axisLabel: { color: "#737c76", fontSize: 10 }, splitLine: { lineStyle: { color: "#e4e7e4" } } },
       series: [
@@ -67,6 +67,7 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
           fontSize: quarterFilter === "all" ? 8 : 10,
           formatter: ({ value, dataIndex }: { value: number | null; dataIndex: number }) => {
             if (value == null || Math.abs(value) < .5) return "";
+            if (kind === "platform" && item.name === "芒果TV") return "";
             const share = totals[dataIndex] ? Number(value) / totals[dataIndex] * 100 : 0;
             return kind === "total" ? Number(value).toFixed(0) : `${Number(value).toFixed(0)}\n(${share.toFixed(0)}%)`;
           },
@@ -82,8 +83,59 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
     });
     const drawAnnotations = () => {
       if (!showComparison) return setBracketAnnotations(chart, []);
-      const comparisons = [{ previousIndex, currentIndex: latestIndex, previousValue: totals[previousIndex], currentValue: totals[latestIndex], label: yoyText(latestYoy), level: 1, targetGap: 28, labelFontSize: 8 }];
-      if (kind === "total") comparisons.push({ previousIndex, currentIndex: latestIndex, previousValue: Number(baseValues[previousIndex]), currentValue: Number(baseValues[latestIndex]), label: yoyText(baseYoy), level: 0, targetGap: 0, variant: "difference" as const, labelFontSize: 8 });
+      const comparisons: BracketComparison[] = [];
+      if (kind === "total") {
+        comparisons.push(
+          { previousIndex, currentIndex: latestIndex, previousValue: totals[previousIndex], currentValue: totals[latestIndex], label: yoyText(latestYoy), level: 1, targetGap: 28, labelFontSize: 8 },
+          { previousIndex, currentIndex: latestIndex, previousValue: Number(baseValues[previousIndex]), currentValue: Number(baseValues[latestIndex]), label: yoyText(baseYoy), level: 0, targetGap: 0, variant: "difference", labelFontSize: 8 },
+        );
+      } else {
+        const legendOrder = ["芒果TV", "优酷", "腾讯视频", "爱奇艺"];
+        const legendRows = [92, 157, 232, 307];
+        legendOrder.forEach((name, legendIndex) => {
+          const item = series.find((entry) => entry.name === name);
+          if (!item) return;
+          const seriesIndex = series.findIndex((entry) => entry.name === name);
+          const current = Number(item.values[latestIndex] ?? 0);
+          const previous = Number(item.values[previousIndex] ?? 0);
+          const lower = series.slice(0, seriesIndex).reduce((sum, entry) => sum + Number(entry.values[latestIndex] ?? 0), 0);
+          const center = lower + current / 2;
+          comparisons.push({
+            previousIndex,
+            currentIndex: latestIndex,
+            previousValue: center,
+            currentValue: center,
+            label: `同比 ${yoyText(previous ? (current / previous - 1) * 100 : null)}`,
+            variant: "sideLabel",
+            title: name,
+            swatchColor: colors[name],
+            labelFontSize: 8,
+            labelY: legendRows[legendIndex],
+          });
+        });
+        periods.forEach((_, dataIndex) => {
+          const mango = series.find((entry) => entry.name === "芒果TV");
+          if (!mango) return;
+          const value = Number(mango.values[dataIndex] ?? 0);
+          if (value < .5) return;
+          const mangoIndex = series.findIndex((entry) => entry.name === "芒果TV");
+          const lower = series.slice(0, mangoIndex).reduce((sum, entry) => sum + Number(entry.values[dataIndex] ?? 0), 0);
+          const center = lower + value / 2;
+          const share = totals[dataIndex] ? value / totals[dataIndex] * 100 : 0;
+          comparisons.push({
+            previousIndex: dataIndex,
+            currentIndex: dataIndex,
+            previousValue: center,
+            currentValue: center,
+            label: `${value.toFixed(0)}\n(${share.toFixed(0)}%)`,
+            variant: "barCallout",
+            color: colors.芒果TV,
+            labelFontSize: quarterFilter === "all" ? 7 : 8,
+            labelYShift: 0,
+            arrowOffset: 25,
+          });
+        });
+      }
       setBracketAnnotations(chart, comparisons);
     };
     requestAnimationFrame(drawAnnotations);
@@ -116,7 +168,7 @@ export function HorizontalDramaTrend() {
           </button>
         ))}
       </div>
-      <div className="horizontal-drama-charts">
+      <div className="horizontal-drama-charts asymmetric-platform-charts">
         <article className="horizontal-drama-panel"><header><h5>byQ 有效播放（亿）</h5></header><StackedChart kind="total" quarterFilter={quarterFilter} /></article>
         <article className="horizontal-drama-panel"><header><h5>byQ 分平台 TOP50 上新长剧播放（亿）</h5></header><StackedChart kind="platform" quarterFilter={quarterFilter} /></article>
       </div>
