@@ -186,17 +186,15 @@ function AudienceTrendChart({ data, showHint = true }: { data: AudienceData; sho
           <span>平台用户趋势</span>
           <h3>{data.metric}（{data.unit}）</h3>
         </div>
-        <p>数据来源：{data.source}</p>
-      </div>
-
-      <div className="chart-controls">
-        <div className="range-buttons" aria-label="时间范围">
-          <button className={rangePreset === "1" ? "selected" : ""} type="button" onClick={() => setRange(1)}>近 1 年</button>
-          <button className={rangePreset === "5" ? "selected" : ""} type="button" onClick={() => setRange(5)}>近 5 年</button>
-        </div>
-        <div className="month-controls">
-          <label>开始月份<input type="month" min={firstPeriod} max={endPeriod} value={startPeriod} onChange={(event) => { setStartPeriod(event.target.value); setRangePreset("custom"); }} /></label>
-          <label>结束月份<input type="month" min={startPeriod} max={lastPeriod} value={endPeriod} onChange={(event) => { setEndPeriod(event.target.value); setRangePreset("custom"); }} /></label>
+        <div className="chart-controls chart-controls-compact">
+          <div className="range-buttons" aria-label="时间范围">
+            <button className={rangePreset === "1" ? "selected" : ""} type="button" onClick={() => setRange(1)}>近 1 年</button>
+            <button className={rangePreset === "5" ? "selected" : ""} type="button" onClick={() => setRange(5)}>近 5 年</button>
+          </div>
+          <div className="month-controls">
+            <label>开始月份<input type="month" min={firstPeriod} max={endPeriod} value={startPeriod} onChange={(event) => { setStartPeriod(event.target.value); setRangePreset("custom"); }} /></label>
+            <label>结束月份<input type="month" min={startPeriod} max={lastPeriod} value={endPeriod} onChange={(event) => { setEndPeriod(event.target.value); setRangePreset("custom"); }} /></label>
+          </div>
         </div>
       </div>
 
@@ -213,7 +211,10 @@ function AudienceTrendChart({ data, showHint = true }: { data: AudienceData; sho
       </div>
 
       <div ref={chartRef} className="dau-chart" role="img" aria-label={`${startPeriod}至${endPeriod}各平台${data.metric}趋势图`} />
-      {showHint && <p className="chart-hint">悬停查看月度数据。按住 Shift 滚轮可缩放时间范围，点击平台可显示或隐藏曲线。</p>}
+      <div className="chart-meta">
+        <p className="chart-hint">{showHint ? "悬停查看月度数据；Shift + 滚轮缩放；点击平台显隐。" : "悬停查看月度数据。"}</p>
+        <p className="chart-source">数据来源：{data.source}</p>
+      </div>
     </article>
   );
 }

@@ -156,16 +156,15 @@ function StackedDurationChart({
     <article className={`duration-chart-module${platforms.length === 4 ? " duration-chart-short" : ""}`}>
       <div className="dau-header">
         <div><span>平台时长趋势</span><h3>{title}（亿小时）</h3></div>
-        <p>数据来源：{durationData.source}</p>
-      </div>
-      <div className="duration-controls">
-        <div className="range-buttons" aria-label="时间范围">
-          <button className={rangePreset === "1" ? "selected" : ""} type="button" onClick={() => setRange(1)}>近 1 年</button>
-          <button className={rangePreset === "5" ? "selected" : ""} type="button" onClick={() => setRange(5)}>近 5 年</button>
-        </div>
-        <div className="quarter-controls">
-          <label>开始季度<select value={startPeriod} onChange={(event) => { setStartPeriod(event.target.value); setRangePreset("custom"); }}>{durationData.periods.slice(0, endIndex + 1).map((period) => <option key={period}>{period}</option>)}</select></label>
-          <label>结束季度<select value={endPeriod} onChange={(event) => { setEndPeriod(event.target.value); setRangePreset("custom"); }}>{durationData.periods.slice(startIndex).map((period) => <option key={period}>{period}</option>)}</select></label>
+        <div className="duration-controls chart-controls-compact">
+          <div className="range-buttons" aria-label="时间范围">
+            <button className={rangePreset === "1" ? "selected" : ""} type="button" onClick={() => setRange(1)}>近 1 年</button>
+            <button className={rangePreset === "5" ? "selected" : ""} type="button" onClick={() => setRange(5)}>近 5 年</button>
+          </div>
+          <div className="quarter-controls">
+            <label>开始季度<select value={startPeriod} onChange={(event) => { setStartPeriod(event.target.value); setRangePreset("custom"); }}>{durationData.periods.slice(0, endIndex + 1).map((period) => <option key={period}>{period}</option>)}</select></label>
+            <label>结束季度<select value={endPeriod} onChange={(event) => { setEndPeriod(event.target.value); setRangePreset("custom"); }}>{durationData.periods.slice(startIndex).map((period) => <option key={period}>{period}</option>)}</select></label>
+          </div>
         </div>
       </div>
       <div className="series-toggles" aria-label="选择平台">
@@ -179,7 +178,10 @@ function StackedDurationChart({
         <i aria-hidden="true" />
       </div>
       <div ref={chartRef} className="duration-chart" role="img" aria-label={`${startPeriod}至${endPeriod}${title}绝对值重叠面积趋势图`} />
-      {showHint && <p className="chart-hint">悬停查看季度绝对值。按住 Shift 滚轮可缩放时间范围，点击平台可显示或隐藏曲线。</p>}
+      <div className="chart-meta">
+        <p className="chart-hint">{showHint ? "悬停查看季度数据；Shift + 滚轮缩放；点击平台显隐。" : "悬停查看季度数据。"}</p>
+        <p className="chart-source">数据来源：{durationData.source}</p>
+      </div>
     </article>
   );
 }
