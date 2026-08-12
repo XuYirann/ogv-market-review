@@ -6,6 +6,7 @@ import { EditableInsight } from "./EditableInsight";
 import data from "../data/horizontalDramaTrend.json";
 import { HorizontalDramaEfficiency } from "./HorizontalDramaEfficiency";
 import { setBracketAnnotations } from "./chartBrackets";
+import { HorizontalShortDramaTrend } from "./HorizontalShortDramaTrend";
 
 const colors: Record<string, string> = {
   其他: "#d9dfe8", "热播剧 TOP50": "#385577",
@@ -121,6 +122,7 @@ export function HorizontalDramaTrend() {
       </div>
       <p className="horizontal-drama-source">数据来源：{data.source}</p>
       <HorizontalDramaEfficiency filter={quarterFilter} />
+      <HorizontalShortDramaTrend filter={quarterFilter} />
     </section>
   );
 }

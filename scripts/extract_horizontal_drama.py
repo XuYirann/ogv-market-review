@@ -37,6 +37,8 @@ def main():
     concentration = read_sheet(workbook, "by集中度_top50上新长剧播放_亿")
     episodes = read_sheet(workbook, "top50上新长剧_平均集数")
     v30 = read_sheet(workbook, "top50上新长剧_集均V30_万")
+    short_totals = read_sheet(workbook, "byQ_短剧有效播放_亿")
+    short_platforms = read_sheet(workbook, "byQ_短剧分平台top50上新播放_亿")
     payload = {
         "unit": "亿",
         "source": "云合数据",
@@ -74,6 +76,22 @@ def main():
                 "series": [
                     {"name": "TOP10", "values": [clean(row.get("top10")) for row in v30]},
                     {"name": "11–50", "values": [clean(row.get("11-50")) for row in v30]},
+                ],
+            },
+        },
+        "shortDrama": {
+            "periods": [row["quarter"] for row in short_totals],
+            "total": {
+                "series": [
+                    {"name": "上新剧", "values": [clean(row.get("上新剧")) for row in short_totals]},
+                    {"name": "其他", "values": [clean(row.get("其他")) for row in short_totals]},
+                ],
+                "totals": [clean(row.get("总计")) for row in short_totals],
+            },
+            "platform": {
+                "series": [
+                    {"name": name, "values": [clean(row.get(name)) for row in short_platforms]}
+                    for name in ["爱奇艺", "腾讯视频", "优酷", "芒果TV"]
                 ],
             },
         },
