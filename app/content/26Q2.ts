@@ -28,3 +28,11 @@ export const durationQuarterContent = {
     },
   ],
 } as const;
+
+export const overlapQuarterContent = {
+  insights: [{
+    lead: "红果继续拓展新用户，同时吸收部分长视频用户",
+    body: "26Q2 红果与爱腾重叠用户增至 1.61 亿（较 26Q1 +10%），红果独家用户增至 2.08 亿（+22%）；爱腾独家用户降至 3.03 亿（-10%）。",
+    highlights: ["1.61 亿（较 26Q1 +10%）", "2.08 亿（+22%）", "3.03 亿（-10%）"],
+  }],
+} as const;
