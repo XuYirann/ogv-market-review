@@ -26,8 +26,8 @@ function ConcentrationChart({ filter }: { filter: QuarterFilter }) {
   useEffect(() => {
     if (!ref.current) return;
     const chart = echarts.init(ref.current); const n = model.periods.length; const compare = filter !== "all" && n > 1;
-    chart.setOption({ animationDuration: 420, grid: { left: 46, right: 118, top: 108, bottom: 62 }, tooltip: { show: false },
-      legend: { bottom: 12, data: ["TOP10", "11–50"], itemWidth: 10, itemHeight: 10 },
+    chart.setOption({ animationDuration: 420, grid: { left: 46, right: 146, top: 108, bottom: 34 }, tooltip: { show: false },
+      legend: { show: false },
       xAxis: { type: "category", data: model.periods, axisTick: { show: false }, axisLabel: { interval: filter === "all" ? 3 : 0, fontSize: 10 }, axisLine: { lineStyle: { color: "#aeb7b0" } } },
       yAxis: { type: "value", axisLabel: { fontSize: 10, color: "#737c76" }, splitLine: { lineStyle: { color: "#e4e7e4" } } },
       series: [
@@ -40,8 +40,8 @@ function ConcentrationChart({ filter }: { filter: QuarterFilter }) {
       const top = model.series.find((s) => s.name === "TOP10")!;
       setBracketAnnotations(chart, [
         { previousIndex: n-2, currentIndex: n-1, previousValue: model.totals[n-2], currentValue: model.totals[n-1], label: pct(yoy(model.totals[n-1], model.totals[n-2])), level: 2, targetGap: 24, labelFontSize: 8 },
-        { previousIndex: n-2, currentIndex: n-1, previousValue: Number(bottom.values[n-2]), currentValue: Number(bottom.values[n-1]), label: `11–50 ${pct(yoy(Number(bottom.values[n-1]), Number(bottom.values[n-2])))}`, variant: "difference", labelFontSize: 7, labelYShift: 11, arrowOffset: 42 },
-        { previousIndex: n-2, currentIndex: n-1, previousValue: Number(top.values[n-2]), currentValue: Number(top.values[n-1]), label: `TOP10 ${pct(yoy(Number(top.values[n-1]), Number(top.values[n-2])))}`, variant: "difference", labelFontSize: 7, labelYShift: -11, arrowOffset: 24 },
+        { previousIndex: n-2, currentIndex: n-1, previousValue: 0, currentValue: Number(bottom.values[n-1]) / 2, label: `同比 ${pct(yoy(Number(bottom.values[n-1]), Number(bottom.values[n-2])))}`, title: "11–50", variant: "sideLabel", labelFontSize: 8, swatchColor: colors["11–50"] },
+        { previousIndex: n-2, currentIndex: n-1, previousValue: 0, currentValue: Number(bottom.values[n-1]) + Number(top.values[n-1]) / 2, label: `同比 ${pct(yoy(Number(top.values[n-1]), Number(top.values[n-2])))}`, title: "TOP10", variant: "sideLabel", labelFontSize: 8, swatchColor: colors.TOP10 },
       ]);
     };
     requestAnimationFrame(draw);

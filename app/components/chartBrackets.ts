@@ -12,10 +12,12 @@ export type BracketComparison = {
   yAxisIndex?: number;
   xOffset?: number;
   targetGap?: number;
-  variant?: "bracket" | "difference";
+  variant?: "bracket" | "difference" | "sideLabel";
   labelFontSize?: number;
   labelYShift?: number;
   arrowOffset?: number;
+  title?: string;
+  swatchColor?: string;
 };
 
 export function setBracketAnnotations(chart: echarts.ECharts, comparisons: BracketComparison[]) {
@@ -39,6 +41,23 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
     const labelFontSize = item.labelFontSize ?? 8;
     const bubbleHeight = labelFontSize + 10;
     const bubbleWidth = Math.max(36, item.label.length * (labelFontSize * .92) + 14);
+    if (item.variant === "sideLabel") {
+      const labelX = chart.getWidth() - 102;
+      const labelY = current[1] + (item.labelYShift ?? 0);
+      graphics.push({
+        id: `comparison-${index}`,
+        type: "group",
+        silent: true,
+        zlevel: 100,
+        z: 100,
+        children: [
+          { type: "rect", shape: { x: labelX, y: labelY - 14, width: 9, height: 9 }, style: { fill: item.swatchColor ?? color } },
+          { type: "text", style: { x: labelX + 16, y: labelY - 10, text: item.title ?? "", fill: item.swatchColor ?? "#33403a", font: "600 9px sans-serif", textAlign: "left", textVerticalAlign: "middle" } },
+          { type: "text", style: { x: labelX + 16, y: labelY + 7, text: item.label, fill: "#c74337", font: `600 ${labelFontSize}px sans-serif`, textAlign: "left", textVerticalAlign: "middle" } },
+        ],
+      });
+      return;
+    }
     if (item.variant === "difference") {
       const arrowX = current[0] + (item.arrowOffset ?? 28);
       const bubbleX = Math.min(arrowX + 6, chart.getWidth() - bubbleWidth - 6);
