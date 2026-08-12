@@ -95,7 +95,7 @@ a { color: inherit; text-decoration: none; }
 .audience-charts .chart-controls .month-controls { display: flex; align-items: center; gap: 6px; }
 .audience-charts .chart-controls.chart-controls-compact label { display: flex; align-items: center; gap: 4px; color: var(--muted); font-size: 9px; line-height: 1; white-space: nowrap; }
 .audience-charts .chart-controls.chart-controls-compact input { width: 86px; height: 26px; padding: 0 5px; font-size: 9px; }
-.audience-charts .dau-chart { height: 300px; }
+.audience-charts .dau-chart { height: 350px; }
 .overlap-analysis-group { margin-top: 28px; }
 .overlap-chart-module { margin-top: 22px; border: 1.5px solid #aeb7b0; background: #f9faf7; }
 .overlap-chart-module .dau-header { padding-bottom: 6px; }
@@ -112,10 +112,14 @@ a { color: inherit; text-decoration: none; }
 .duration-charts { display: grid; gap: 22px; margin-top: 22px; }
 .duration-chart-module { border: 1.5px solid #aeb7b0; background: #f9faf7; }
 .duration-chart-module + .duration-chart-module { border-top: 1.5px solid #aeb7b0; }
-.duration-controls { min-width: 390px; }
+.duration-controls { min-width: 390px; display: flex; align-items: center; gap: 6px; }
+.duration-controls .range-buttons { flex: 0 0 auto; }
 .quarter-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .quarter-controls label { display: grid; gap: 6px; color: var(--muted); font-size: 9px; font-weight: 650; }
 .quarter-controls select { width: 100%; height: 28px; padding: 0 7px; border: 1px solid #cfd5d0; color: var(--ink); background: #fff; font: 500 9px/1 ui-monospace, monospace; }
+.duration-controls .quarter-controls { display: flex; align-items: center; gap: 6px; }
+.duration-controls.chart-controls-compact label { display: flex; align-items: center; gap: 4px; color: var(--muted); font-size: 9px; line-height: 1; white-space: nowrap; }
+.duration-controls.chart-controls-compact select { width: 70px; height: 26px; padding: 0 5px; font-size: 9px; }
 .quarter-total-row { display: grid; grid-template-columns: 58px minmax(0, 1fr) 176px; align-items: end; padding-top: 14px; }
 .quarter-total-row > span { padding-left: 8px; color: var(--muted); font-size: 9px; font-weight: 650; }
 .quarter-total-strip { display: grid; align-items: end; min-width: 0; }
@@ -132,6 +136,7 @@ a { color: inherit; text-decoration: none; }
 .dau-header p { margin: 0; color: var(--muted); font-size: 11px; }
 .chart-controls { display: flex; align-items: end; gap: 14px; padding: 12px 24px; }
 .chart-controls-compact { display: grid; justify-items: end; gap: 5px; padding: 0; }
+.duration-controls.chart-controls-compact { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
 .chart-controls-compact .range-buttons { justify-self: end; }
 .chart-controls-compact .month-controls, .chart-controls-compact .quarter-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; min-width: 0; }
 .chart-controls-compact label { min-width: 0; gap: 3px; font-size: 8px; }
@@ -254,6 +259,7 @@ footer p { margin: 0; }
   .chart-controls-compact .range-buttons { width: auto; justify-self: start; }
   .audience-charts .chart-controls { min-width: 0; flex-wrap: wrap; }
   .duration-controls { min-width: 0; }
+  .duration-controls { flex-wrap: wrap; }
   .range-buttons { width: 100%; }
   .range-buttons button { flex: 1; }
   .dau-chart { height: 350px; }

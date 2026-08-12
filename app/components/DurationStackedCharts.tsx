@@ -162,8 +162,8 @@ function StackedDurationChart({
             <button className={rangePreset === "5" ? "selected" : ""} type="button" onClick={() => setRange(5)}>近 5 年</button>
           </div>
           <div className="quarter-controls">
-            <label>开始季度<select value={startPeriod} onChange={(event) => { setStartPeriod(event.target.value); setRangePreset("custom"); }}>{durationData.periods.slice(0, endIndex + 1).map((period) => <option key={period}>{period}</option>)}</select></label>
-            <label>结束季度<select value={endPeriod} onChange={(event) => { setEndPeriod(event.target.value); setRangePreset("custom"); }}>{durationData.periods.slice(startIndex).map((period) => <option key={period}>{period}</option>)}</select></label>
+            <label>开始<select value={startPeriod} onChange={(event) => { setStartPeriod(event.target.value); setRangePreset("custom"); }}>{durationData.periods.slice(0, endIndex + 1).map((period) => <option key={period}>{period}</option>)}</select></label>
+            <label>结束<select value={endPeriod} onChange={(event) => { setEndPeriod(event.target.value); setRangePreset("custom"); }}>{durationData.periods.slice(startIndex).map((period) => <option key={period}>{period}</option>)}</select></label>
           </div>
         </div>
       </div>
