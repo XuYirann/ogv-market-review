@@ -81,8 +81,10 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
         } : undefined,
       })),
         {
-          name: "合计", type: "line" as const, data: totals, symbol: "none", lineStyle: { opacity: 0 }, silent: true,
-          label: { show: true, position: "top" as const, color: "#161917", fontSize: 11, fontWeight: 700, formatter: ({ value }: { value: number }) => Number(value).toFixed(0) },
+          name: "柱顶合计", type: "bar" as const, data: totals, barMaxWidth: 36, barGap: "-100%", silent: true, z: 20,
+          itemStyle: { color: "rgba(0,0,0,0)" },
+          emphasis: { disabled: true },
+          label: { show: true, position: "top" as const, distance: 8, color: "#161917", fontSize: 12, fontWeight: 700, formatter: ({ value }: { value: number }) => Number(value).toFixed(0) },
           markLine: showComparison ? {
             silent: true,
             symbol: ["none", "arrow"],
