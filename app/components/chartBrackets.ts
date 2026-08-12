@@ -40,9 +40,8 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
     const bubbleHeight = labelFontSize + 10;
     const bubbleWidth = Math.max(36, item.label.length * (labelFontSize * .92) + 14);
     if (item.variant === "difference") {
-      const barEdgeOffset = 18;
       const arrowX = current[0] + (item.arrowOffset ?? 28);
-      const bubbleX = Math.max(arrowX + 8, chart.getWidth() - bubbleWidth - 8);
+      const bubbleX = Math.min(arrowX + 6, chart.getWidth() - bubbleWidth - 6);
       const descending = current[1] > previous[1];
       const arrowY = current[1] - 3;
       const labelY = (previous[1] + current[1]) / 2 + (item.labelYShift ?? 0);
@@ -53,10 +52,11 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
         id: `comparison-${index}`,
         type: "group",
         silent: true,
+        zlevel: 100,
         z: 100,
         children: [
-          { type: "line", shape: { x1: previous[0] + barEdgeOffset, y1: previous[1], x2: arrowX, y2: previous[1] }, style: { stroke: "#68716b", lineWidth: 1.1, lineDash: [4, 3] } },
-          { type: "line", shape: { x1: current[0] + barEdgeOffset, y1: current[1], x2: arrowX, y2: current[1] }, style: { stroke: "#68716b", lineWidth: 1.1, lineDash: [4, 3] } },
+          { type: "line", shape: { x1: previous[0], y1: previous[1], x2: arrowX, y2: previous[1] }, style: { stroke: "#68716b", lineWidth: 1.1, lineDash: [4, 3] } },
+          { type: "line", shape: { x1: current[0], y1: current[1], x2: arrowX, y2: current[1] }, style: { stroke: "#68716b", lineWidth: 1.1, lineDash: [4, 3] } },
           { type: "line", shape: { x1: arrowX, y1: previous[1], x2: arrowX, y2: arrowY }, style: { stroke: "#c74337", lineWidth: 1.8 } },
           { type: "polygon", shape: { points: arrowPoints }, style: { fill: "#c74337" } },
           { type: "rect", shape: { x: bubbleX, y: labelY - bubbleHeight / 2, width: bubbleWidth, height: bubbleHeight, r: bubbleHeight / 2 }, style: { fill: "#fbfcf9", stroke: "#c9ceca", lineWidth: 1 } },
@@ -69,6 +69,7 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
       id: `comparison-${index}`,
       type: "group",
       silent: true,
+      zlevel: 100,
       z: 100,
       children: [
         { type: "polyline", shape: { points: [[previous[0], previousEndY], [previous[0], topY], [current[0], topY], [current[0], currentEndY - 4]] }, style: { stroke: color, lineWidth: 1.25, fill: "none" } },

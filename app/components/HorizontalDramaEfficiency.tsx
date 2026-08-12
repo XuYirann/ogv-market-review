@@ -39,7 +39,7 @@ function ConcentrationChart({ filter }: { filter: QuarterFilter }) {
       const bottom = model.series.find((s) => s.name === "11–50")!;
       const top = model.series.find((s) => s.name === "TOP10")!;
       setBracketAnnotations(chart, [
-        { previousIndex: n-2, currentIndex: n-1, previousValue: model.totals[n-2], currentValue: model.totals[n-1], label: `总计 ${pct(yoy(model.totals[n-1], model.totals[n-2]))}`, level: 2, targetGap: 24, labelFontSize: 8 },
+        { previousIndex: n-2, currentIndex: n-1, previousValue: model.totals[n-2], currentValue: model.totals[n-1], label: pct(yoy(model.totals[n-1], model.totals[n-2])), level: 2, targetGap: 24, labelFontSize: 8 },
         { previousIndex: n-2, currentIndex: n-1, previousValue: Number(bottom.values[n-2]), currentValue: Number(bottom.values[n-1]), label: `11–50 ${pct(yoy(Number(bottom.values[n-1]), Number(bottom.values[n-2])))}`, variant: "difference", labelFontSize: 7, labelYShift: 11, arrowOffset: 42 },
         { previousIndex: n-2, currentIndex: n-1, previousValue: Number(top.values[n-2]), currentValue: Number(top.values[n-1]), label: `TOP10 ${pct(yoy(Number(top.values[n-1]), Number(top.values[n-2])))}`, variant: "difference", labelFontSize: 7, labelYShift: -11, arrowOffset: 24 },
       ]);
