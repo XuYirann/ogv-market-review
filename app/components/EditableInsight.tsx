@@ -13,7 +13,7 @@ function HighlightedText({ text, highlights }: { text: string; highlights: reado
   }, [text]);
 
   return parts.map((part, index) =>
-    typeof part === "string" ? part : <strong key={`${part.key}-${index}`}>{part.value}</strong>,
+    typeof part === "string" ? part : <strong className={/(增长|增加|增至|\+\d)/.test(part.value) ? "positive" : undefined} key={`${part.key}-${index}`}>{part.value}</strong>,
   );
 }
 

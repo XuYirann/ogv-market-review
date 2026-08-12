@@ -84,6 +84,7 @@ a { color: inherit; text-decoration: none; }
 .insight-editor::before { content: "-"; position: absolute; left: 0; color: var(--ink); }
 .insight-editor > b { font-weight: 750; }
 .insight-editor strong { color: #c43e35; font-weight: 750; }
+.insight-editor strong.positive { color: var(--ink); }
 .insight-editor:hover { background: rgb(23 126 85 / 4%); }
 .insight-editor:focus { background: rgb(23 126 85 / 7%); box-shadow: inset 2px 0 0 var(--accent); }
 .audience-charts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; margin-top: 22px; }

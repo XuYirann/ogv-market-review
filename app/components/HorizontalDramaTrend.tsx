@@ -10,7 +10,7 @@ import { HorizontalShortDramaTrend } from "./HorizontalShortDramaTrend";
 
 const colors: Record<string, string> = {
   其他: "#d9dfe8", "热播剧 TOP50": "#385577",
-  爱奇艺: "#7ba900", 腾讯视频: "#486b9f", 优酷: "#00aee8", 芒果TV: "#df661d", 其他: "#b7beb8",
+  爱奇艺: "#78945a", 腾讯视频: "#58749a", 优酷: "#5d9bad", 芒果TV: "#c47b4d", 其他: "#b7beb8",
 };
 
 function yoy(values: (number | null)[]) {

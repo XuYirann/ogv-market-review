@@ -42,6 +42,7 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
     const labelFontSize = item.labelFontSize ?? 8;
     const bubbleHeight = labelFontSize + 10;
     const bubbleWidth = Math.max(36, item.label.length * (labelFontSize * .92) + 14);
+    const trendColor = item.label.trim().startsWith("+") || item.label.includes("同比 +") ? "#161917" : "#c74337";
     if (item.variant === "sideLabel") {
       const labelX = chart.getWidth() - 102;
       const labelY = item.labelY ?? current[1] + (item.labelYShift ?? 0);
@@ -54,7 +55,7 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
         children: [
           { type: "rect", shape: { x: labelX, y: labelY - 14, width: 9, height: 9 }, style: { fill: item.swatchColor ?? color } },
           { type: "text", style: { x: labelX + 16, y: labelY - 10, text: item.title ?? "", fill: item.swatchColor ?? "#33403a", font: "600 9px sans-serif", textAlign: "left", textVerticalAlign: "middle" } },
-          { type: "text", style: { x: labelX + 16, y: labelY + 7, text: item.label, fill: "#c74337", font: `600 ${labelFontSize}px sans-serif`, textAlign: "left", textVerticalAlign: "middle" } },
+          { type: "text", style: { x: labelX + 16, y: labelY + 7, text: item.label, fill: trendColor, font: `600 ${labelFontSize}px sans-serif`, textAlign: "left", textVerticalAlign: "middle" } },
         ],
       });
       return;
@@ -95,10 +96,10 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
         children: [
           { type: "line", shape: { x1: previous[0], y1: previous[1], x2: arrowX, y2: previous[1] }, style: { stroke: "#68716b", lineWidth: 1.1, lineDash: [4, 3] } },
           { type: "line", shape: { x1: current[0], y1: current[1], x2: arrowX, y2: current[1] }, style: { stroke: "#68716b", lineWidth: 1.1, lineDash: [4, 3] } },
-          { type: "line", shape: { x1: arrowX, y1: previous[1], x2: arrowX, y2: arrowY }, style: { stroke: "#c74337", lineWidth: 1.8 } },
-          { type: "polygon", shape: { points: arrowPoints }, style: { fill: "#c74337" } },
+          { type: "line", shape: { x1: arrowX, y1: previous[1], x2: arrowX, y2: arrowY }, style: { stroke: trendColor, lineWidth: 1.8 } },
+          { type: "polygon", shape: { points: arrowPoints }, style: { fill: trendColor } },
           { type: "rect", shape: { x: bubbleX, y: labelY - bubbleHeight / 2, width: bubbleWidth, height: bubbleHeight, r: bubbleHeight / 2 }, style: { fill: "#fbfcf9", stroke: "#c9ceca", lineWidth: 1 } },
-          { type: "text", style: { x: bubbleX + bubbleWidth / 2, y: labelY, text: item.label, fill: "#c74337", font: `600 ${labelFontSize}px sans-serif`, textAlign: "center", textVerticalAlign: "middle" } },
+          { type: "text", style: { x: bubbleX + bubbleWidth / 2, y: labelY, text: item.label, fill: trendColor, font: `600 ${labelFontSize}px sans-serif`, textAlign: "center", textVerticalAlign: "middle" } },
         ],
       });
       return;
@@ -113,7 +114,7 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
         { type: "polyline", shape: { points: [[previous[0], previousEndY], [previous[0], topY], [current[0], topY], [current[0], currentEndY - 4]] }, style: { stroke: color, lineWidth: 1.25, fill: "none" } },
         { type: "polygon", shape: { points: [[current[0] - 4, currentEndY - 8], [current[0] + 4, currentEndY - 8], [current[0], currentEndY - 1]] }, style: { fill: color } },
         { type: "rect", shape: { x: midX - bubbleWidth / 2, y: topY - bubbleHeight / 2, width: bubbleWidth, height: bubbleHeight, r: bubbleHeight / 2 }, style: { fill: "#fbfcf9", stroke: "#c9ceca", lineWidth: 1 } },
-        { type: "text", style: { x: midX, y: topY, text: item.label, fill: "#c74337", font: `600 ${labelFontSize}px sans-serif`, textAlign: "center", textVerticalAlign: "middle" } },
+        { type: "text", style: { x: midX, y: topY, text: item.label, fill: trendColor, font: `600 ${labelFontSize}px sans-serif`, textAlign: "center", textVerticalAlign: "middle" } },
       ],
     });
   });

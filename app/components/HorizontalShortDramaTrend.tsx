@@ -11,10 +11,10 @@ type QuarterFilter = "Q1" | "Q2" | "Q3" | "Q4" | "all";
 const colors: Record<string, string> = {
   上新剧: "#385577",
   其他: "#d9dfe8",
-  爱奇艺: "#7ba900",
-  腾讯视频: "#486b9f",
-  优酷: "#00aee8",
-  芒果TV: "#df661d",
+  爱奇艺: "#78945a",
+  腾讯视频: "#58749a",
+  优酷: "#5d9bad",
+  芒果TV: "#c47b4d",
 };
 
 function yoy(current: number | null | undefined, previous: number | null | undefined) {
