@@ -26,7 +26,7 @@ function ConcentrationChart({ filter }: { filter: QuarterFilter }) {
   useEffect(() => {
     if (!ref.current) return;
     const chart = echarts.init(ref.current); const n = model.periods.length; const compare = filter !== "all" && n > 1;
-    chart.setOption({ animationDuration: 420, grid: { left: 46, right: 62, top: 108, bottom: 62 }, tooltip: { show: false },
+    chart.setOption({ animationDuration: 420, grid: { left: 46, right: 118, top: 108, bottom: 62 }, tooltip: { show: false },
       legend: { bottom: 12, data: ["TOP10", "11–50"], itemWidth: 10, itemHeight: 10 },
       xAxis: { type: "category", data: model.periods, axisTick: { show: false }, axisLabel: { interval: filter === "all" ? 3 : 0, fontSize: 10 }, axisLine: { lineStyle: { color: "#aeb7b0" } } },
       yAxis: { type: "value", axisLabel: { fontSize: 10, color: "#737c76" }, splitLine: { lineStyle: { color: "#e4e7e4" } } },
@@ -39,9 +39,9 @@ function ConcentrationChart({ filter }: { filter: QuarterFilter }) {
       const bottom = model.series.find((s) => s.name === "11–50")!;
       const top = model.series.find((s) => s.name === "TOP10")!;
       setBracketAnnotations(chart, [
-        { previousIndex: n-2, currentIndex: n-1, previousValue: model.totals[n-2], currentValue: model.totals[n-1], label: `总计 ${pct(yoy(model.totals[n-1], model.totals[n-2]))}`, level: 2, targetGap: 24 },
-        { previousIndex: n-2, currentIndex: n-1, previousValue: Number(bottom.values[n-2]), currentValue: Number(bottom.values[n-1]), label: `11–50 ${pct(yoy(Number(bottom.values[n-1]), Number(bottom.values[n-2])))}`, level: 0, color: "#9aa5ad", targetGap: 8 },
-        { previousIndex: n-2, currentIndex: n-1, previousValue: Number(top.values[n-2]), currentValue: Number(top.values[n-1]), label: `TOP10 ${pct(yoy(Number(top.values[n-1]), Number(top.values[n-2])))}`, level: 1, color: "#788ea8", targetGap: 8 },
+        { previousIndex: n-2, currentIndex: n-1, previousValue: model.totals[n-2], currentValue: model.totals[n-1], label: `总计 ${pct(yoy(model.totals[n-1], model.totals[n-2]))}`, level: 2, targetGap: 24, labelFontSize: 8 },
+        { previousIndex: n-2, currentIndex: n-1, previousValue: Number(bottom.values[n-2]), currentValue: Number(bottom.values[n-1]), label: `11–50 ${pct(yoy(Number(bottom.values[n-1]), Number(bottom.values[n-2])))}`, variant: "difference", labelFontSize: 7, labelYShift: 11 },
+        { previousIndex: n-2, currentIndex: n-1, previousValue: Number(top.values[n-2]), currentValue: Number(top.values[n-1]), label: `TOP10 ${pct(yoy(Number(top.values[n-1]), Number(top.values[n-2])))}`, variant: "difference", labelFontSize: 7, labelYShift: -11 },
       ]);
     };
     requestAnimationFrame(draw);
@@ -57,7 +57,7 @@ function SplitMetricChart({ metric, filter }: { metric: EfficiencyKey; filter: Q
     chart.setOption({ animationDuration: 420, title: model.series.map((s, i) => ({ text: s.name, left: i === 0 ? "24%" : "73%", top: 2, textAlign: "center", textStyle: { color: "#33403a", fontSize: 10, fontWeight: 650 } })), grid: [{ left: 36, right: "54%", top: 52, bottom: 30 }, { left: "55%", right: 14, top: 52, bottom: 30 }], tooltip: { show: false },
       xAxis: model.series.map((_, i) => ({ type: "category", gridIndex: i, data: model.periods, axisTick: { show: false }, axisLabel: { interval: filter === "all" ? 3 : 0, fontSize: 8 }, axisLine: { lineStyle: { color: "#aeb7b0" } } })), yAxis: model.series.map((_, i) => ({ type: "value", gridIndex: i, axisLabel: { fontSize: 8, color: "#737c76" }, splitLine: { lineStyle: { color: "#e4e7e4" } } })),
       series: model.series.map((s, i) => ({ name: s.name, type: "bar", xAxisIndex: i, yAxisIndex: i, data: s.values, barMaxWidth: 24, itemStyle: { color: colors[s.name as keyof typeof colors] }, label: { show: true, position: "top", fontSize: 8, formatter: ({ value }: { value: number }) => metric === "episodes" ? value.toFixed(0) : value.toLocaleString(undefined, { maximumFractionDigits: 0 }) } })) });
-    const draw = () => setBracketAnnotations(chart, filter !== "all" && n > 1 ? model.series.map((s, i) => ({ previousIndex: n-2, currentIndex: n-1, previousValue: Number(s.values[n-2]), currentValue: Number(s.values[n-1]), label: pct(yoy(Number(s.values[n-1]), Number(s.values[n-2]))), xAxisIndex: i, yAxisIndex: i, targetGap: 10 })) : []);
+    const draw = () => setBracketAnnotations(chart, filter !== "all" && n > 1 ? model.series.map((s, i) => ({ previousIndex: n-2, currentIndex: n-1, previousValue: Number(s.values[n-2]), currentValue: Number(s.values[n-1]), label: pct(yoy(Number(s.values[n-1]), Number(s.values[n-2]))), xAxisIndex: i, yAxisIndex: i, targetGap: 10, labelFontSize: 7 })) : []);
     requestAnimationFrame(draw);
     const ro = new ResizeObserver(() => { chart.resize(); requestAnimationFrame(draw); }); ro.observe(ref.current); return () => { ro.disconnect(); chart.dispose(); };
   }, [filter, metric, model]);

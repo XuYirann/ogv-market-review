@@ -50,7 +50,7 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
     chart.setOption({
       animationDuration: 420,
       color: series.map((item) => colors[item.name]),
-      grid: { left: 48, right: kind === "total" ? 86 : 28, top: 62, bottom: 68 },
+      grid: { left: 48, right: kind === "total" ? 102 : 28, top: 62, bottom: 68 },
       tooltip: { show: false },
       legend: { bottom: 12, data: series.map((item) => item.name), itemWidth: 10, itemHeight: 10, textStyle: { color: "#58615b", fontSize: 10 } },
       xAxis: { type: "category", data: periods, axisTick: { show: false }, axisLine: { lineStyle: { color: "#aeb7b0" } }, axisLabel: { color: "#737c76", fontSize: 10, interval: quarterFilter === "all" ? 3 : 0 } },
@@ -81,8 +81,8 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
     });
     const drawAnnotations = () => {
       if (!showComparison) return setBracketAnnotations(chart, []);
-      const comparisons = [{ previousIndex, currentIndex: latestIndex, previousValue: totals[previousIndex], currentValue: totals[latestIndex], label: yoyText(latestYoy), level: 1, targetGap: 28 }];
-      if (kind === "total") comparisons.push({ previousIndex, currentIndex: latestIndex, previousValue: Number(baseValues[previousIndex]), currentValue: Number(baseValues[latestIndex]), label: yoyText(baseYoy), level: 0, targetGap: 0, variant: "difference" as const });
+      const comparisons = [{ previousIndex, currentIndex: latestIndex, previousValue: totals[previousIndex], currentValue: totals[latestIndex], label: yoyText(latestYoy), level: 1, targetGap: 28, labelFontSize: 8 }];
+      if (kind === "total") comparisons.push({ previousIndex, currentIndex: latestIndex, previousValue: Number(baseValues[previousIndex]), currentValue: Number(baseValues[latestIndex]), label: yoyText(baseYoy), level: 0, targetGap: 0, variant: "difference" as const, labelFontSize: 8 });
       setBracketAnnotations(chart, comparisons);
     };
     requestAnimationFrame(drawAnnotations);
