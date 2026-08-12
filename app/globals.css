@@ -52,7 +52,7 @@ a { color: inherit; text-decoration: none; }
 .side-index a span { font: 600 10px/1.7 ui-monospace, monospace; }
 
 .report { min-width: 0; padding: 0 48px; background: var(--surface); }
-.hero { min-height: 460px; display: grid; grid-template-columns: minmax(0, 1fr) 280px; align-items: end; gap: 60px; padding: 80px 0 56px; border-bottom: 1px solid var(--ink); }
+.hero { min-height: 0; display: block; padding: 96px 0 52px; }
 .eyebrow { margin: 0 0 18px; color: var(--accent); font: 700 15px/1 ui-monospace, monospace; letter-spacing: .12em; }
 .hero h1 { margin: 0; font-size: clamp(38px, 4.6vw, 62px); line-height: 1.05; letter-spacing: -.055em; font-weight: 720; }
 .hero-lead { max-width: 580px; margin: 34px 0 0; color: var(--muted); font-size: 17px; line-height: 1.75; }
@@ -196,9 +196,12 @@ a { color: inherit; text-decoration: none; }
 .category-data-footer > div { display: flex; flex-wrap: wrap; gap: 8px; }
 .category-data-footer span { padding: 7px 10px; border: 1px solid var(--line); color: var(--muted); font-size: 10px; }
 .horizontal-drama-trend { padding-top: 28px; }
-.horizontal-drama-subhead { display: flex; align-items: baseline; gap: 14px; margin-bottom: 20px; }
+.horizontal-drama-lead { padding: 22px 26px 24px; border: 1.5px solid #aeb7b0; background: #f9faf7; }
+.horizontal-drama-subhead { display: flex; align-items: baseline; gap: 14px; margin-bottom: 14px; }
 .horizontal-drama-subhead span { color: var(--accent); font: 700 13px/1 ui-monospace, monospace; }
 .horizontal-drama-subhead h4 { margin: 0; font-size: 21px; letter-spacing: -.03em; }
+.horizontal-drama-lead .audience-insight { padding: 0; border: 0; background: transparent; }
+.horizontal-drama-lead .insight-editor { padding-left: 18px; font-size: 15px; line-height: 1.75; }
 .category-detail { position: relative; }
 .horizontal-drama-quarter-filter { position: absolute; top: 25px; right: 0; display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin: 0; }
 .horizontal-drama-quarter-filter > span { margin-right: 8px; color: var(--muted); font-size: 10px; }
@@ -229,7 +232,7 @@ footer p { margin: 0; }
   .page-frame { display: block; }
   .side-index { display: none; }
   .report { padding: 0 20px; }
-  .hero { min-height: 520px; grid-template-columns: 1fr; gap: 48px; padding: 64px 0 40px; }
+  .hero { min-height: 0; padding: 64px 0 40px; }
   .hero h1 { font-size: 64px; }
   .hero-status { max-width: 300px; }
   .signal-strip { grid-template-columns: 1fr 1fr; }

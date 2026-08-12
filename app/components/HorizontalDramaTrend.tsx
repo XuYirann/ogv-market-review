@@ -103,8 +103,10 @@ export function HorizontalDramaTrend() {
   const body = `26Q2 长剧有效播放 411 亿，同比 ${pct(totalYoy)}；其中热播剧 TOP50 播放 152 亿，同比 ${pct(newYoy)}。分平台 TOP50 上新长剧播放 152 亿，同比 -15%；腾讯、优酷分别下降 ${Math.abs(platformYoys["腾讯视频"]!).toFixed(0)}%、${Math.abs(platformYoys["优酷"]!).toFixed(0)}%，爱奇艺增长 ${platformYoys["爱奇艺"]!.toFixed(0)}%，芒果TV从 5 亿增至 13 亿。`;
   return (
     <section className="horizontal-drama-trend">
-      <div className="horizontal-drama-subhead"><span>01</span><h4>横屏长剧大盘趋势</h4></div>
-      <EditableInsight lead="长剧播放继续下滑，热播剧也在跌" body={body} highlights={["411 亿", pct(totalYoy), "152 亿", pct(newYoy), "下降 16%、52%", "增长 3%", "5 亿增至 13 亿"]} storageKey="ogv-market-review:26q2:horizontal-drama-trend-v2" />
+      <div className="horizontal-drama-lead">
+        <div className="horizontal-drama-subhead"><span>01</span><h4>横屏长剧大盘趋势</h4></div>
+        <EditableInsight lead="长剧播放继续下滑，热播剧也在跌" body={body} highlights={["411 亿", pct(totalYoy), "152 亿", pct(newYoy), "下降 16%、52%", "增长 3%", "5 亿增至 13 亿"]} storageKey="ogv-market-review:26q2:horizontal-drama-trend-v2" />
+      </div>
       <div className="horizontal-drama-quarter-filter" aria-label="选择季度">
         <span>显示季度</span>
         {(["Q1", "Q2", "Q3", "Q4", "all"] as const).map((quarter) => (

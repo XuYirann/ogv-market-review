@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { DauChart, MauChart } from "./components/DauChart";
 import { EditableInsight } from "./components/EditableInsight";
 import { DurationStackedCharts } from "./components/DurationStackedCharts";
-import { audienceQuarterContent, durationQuarterContent } from "./content/26Q2";
+import { AudienceOverlapChart } from "./components/AudienceOverlapChart";
+import { audienceQuarterContent, durationQuarterContent, overlapQuarterContent } from "./content/26Q2";
 import { CategoryFramework } from "./components/CategoryFramework";
 
 export const metadata: Metadata = {
@@ -57,21 +58,12 @@ const modules = [
   },
 ];
 
-function EmptyMetric({ label }: { label: string }) {
-  return (
-    <div className="metric-empty" aria-label={`${label}待接入`}>
-      <span>{label}</span>
-      <strong>待接入</strong>
-      <i />
-    </div>
-  );
-}
-
 function ModuleSection({ module }: { module: (typeof modules)[number] }) {
   const isAudience = module.id === "audience";
   const isDuration = module.id === "attention";
   const audienceInsight = audienceQuarterContent.insights[0];
   const durationInsight = durationQuarterContent.insights[0];
+  const overlapInsight = overlapQuarterContent.insights[0];
 
   return (
     <section id={module.id} className="report-section">
@@ -88,6 +80,11 @@ function ModuleSection({ module }: { module: (typeof modules)[number] }) {
           <DauChart />
           <MauChart />
         </div>
+      </div>}
+
+      {isAudience && <div className="overlap-analysis-group">
+        <EditableInsight lead={overlapInsight.lead} body={overlapInsight.body} highlights={overlapInsight.highlights} storageKey="ogv-market-review:26q2:overlap-insight" />
+        <AudienceOverlapChart />
       </div>}
 
       {isDuration && <div className="duration-analysis-group">
@@ -127,7 +124,7 @@ function ModuleSection({ module }: { module: (typeof modules)[number] }) {
           </div>
         </aside>}
 
-        <article className={`chart-shell chart-secondary${isAudience ? " audience-overlap" : ""}`}>
+        {!isAudience && <article className="chart-shell chart-secondary">
           <div className="chart-header">
             <div>
               <span>结构视图</span>
@@ -138,7 +135,7 @@ function ModuleSection({ module }: { module: (typeof modules)[number] }) {
           <div className="compact-empty">
             <i /><i /><i /><i />
           </div>
-        </article>
+        </article>}
       </div>}
     </section>
   );
@@ -185,28 +182,7 @@ export default function Home() {
             <div className="hero-copy">
               <p className="eyebrow">PART 01</p>
               <h1>平台大盘</h1>
-              <p className="hero-lead">追踪用户、时长、收入与会员，形成可持续更新的季度判断。</p>
             </div>
-            <div className="hero-status">
-              <span>当前状态</span>
-              <strong>结构确认中</strong>
-              <p>未接入任何业务数据</p>
-            </div>
-          </section>
-
-          <section className="signal-strip" aria-label="平台大盘核心指标">
-            <EmptyMetric label="用户规模" />
-            <EmptyMetric label="消费时长" />
-            <EmptyMetric label="市场收入" />
-            <EmptyMetric label="会员业务" />
-          </section>
-
-          <section className="thesis">
-            <div>
-              <span>核心判断</span>
-              <h2>先建立判断框架，再接入季度数据。</h2>
-            </div>
-            <p>每个模块固定回答一个战略问题。数据负责证明变化，分析负责解释变化，最后形成对业务有用的判断。</p>
           </section>
 
           {modules.map((module) => <ModuleSection key={module.id} module={module} />)}
