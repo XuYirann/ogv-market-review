@@ -39,7 +39,12 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
     const chart = echarts.init(chartRef.current);
     const totals = periods.map((_, index) => series.reduce((sum, item) => sum + Number(item.values[index] ?? 0), 0));
     const latestYoy = totals.length > 1 && totals.at(-2) ? (totals.at(-1)! / totals.at(-2)! - 1) * 100 : null;
-    const comparisonLine = totals.map((value, index) => index >= totals.length - 2 ? value : null);
+    const baseValues = series[0]?.values ?? [];
+    const baseYoy = baseValues.length > 1 && baseValues.at(-2) ? (Number(baseValues.at(-1)) / Number(baseValues.at(-2)) - 1) * 100 : null;
+    const yoyText = (value: number | null) => value == null ? "" : `${value > 0 ? "+" : ""}${value.toFixed(0)}%`;
+    const latestIndex = periods.length - 1;
+    const previousIndex = periods.length - 2;
+    const showComparison = quarterFilter !== "all" && periods.length >= 2;
     chart.setOption({
       animationDuration: 420,
       color: series.map((item) => colors[item.name]),
@@ -49,7 +54,7 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
       xAxis: { type: "category", data: periods, axisTick: { show: false }, axisLine: { lineStyle: { color: "#aeb7b0" } }, axisLabel: { color: "#737c76", fontSize: 10, interval: quarterFilter === "all" ? 3 : 0 } },
       yAxis: { type: "value", axisLabel: { color: "#737c76", fontSize: 10 }, splitLine: { lineStyle: { color: "#e4e7e4" } } },
       series: [
-        ...series.map((item) => ({
+        ...series.map((item, seriesIndex) => ({
         name: item.name, type: "bar" as const, stack: "total", data: item.values, barMaxWidth: 36,
         emphasis: { focus: "series" },
         label: {
@@ -57,17 +62,38 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
           position: "inside" as const,
           color: item.name === "其他" || item.name === "优酷" ? "#263038" : "#ffffff",
           fontSize: quarterFilter === "all" ? 8 : 10,
-          formatter: ({ value }: { value: number | null }) => value == null || Math.abs(value) < .5 ? "" : Number(value).toFixed(0),
+          formatter: ({ value, dataIndex }: { value: number | null; dataIndex: number }) => {
+            if (value == null || Math.abs(value) < .5) return "";
+            const share = totals[dataIndex] ? Number(value) / totals[dataIndex] * 100 : 0;
+            return `${Number(value).toFixed(0)}\n(${share.toFixed(0)}%)`;
+          },
         },
+        markLine: seriesIndex === 0 && showComparison ? {
+          silent: true,
+          symbol: ["none", "arrow"],
+          symbolSize: [0, 8],
+          lineStyle: { color: "#c74337", width: 1.5 },
+          label: { show: true, position: "end", color: "#c74337", backgroundColor: "#f9faf7", borderColor: "#c9ceca", borderWidth: 1, borderRadius: 12, padding: [4, 8], formatter: yoyText(baseYoy) },
+          data: [[
+            { coord: [periods[previousIndex], Number(baseValues[previousIndex])], symbol: "none" },
+            { coord: [periods[latestIndex], Number(baseValues[latestIndex])], symbol: "arrow" },
+          ]],
+        } : undefined,
       })),
         {
           name: "合计", type: "line" as const, data: totals, symbol: "none", lineStyle: { opacity: 0 }, silent: true,
           label: { show: true, position: "top" as const, color: "#161917", fontSize: 11, fontWeight: 700, formatter: ({ value }: { value: number }) => Number(value).toFixed(0) },
-        },
-        {
-          name: "同比", type: "line" as const, data: comparisonLine, symbol: "circle", symbolSize: 5, silent: true,
-          lineStyle: { color: "#c74337", width: 1.5, type: "dashed" }, itemStyle: { color: "#c74337" },
-          label: { show: true, position: "top" as const, color: "#c74337", fontSize: 11, fontWeight: 700, formatter: ({ dataIndex }: { dataIndex: number }) => dataIndex === totals.length - 1 && latestYoy != null ? `同比 ${latestYoy > 0 ? "+" : ""}${latestYoy.toFixed(0)}%` : "" },
+          markLine: showComparison ? {
+            silent: true,
+            symbol: ["none", "arrow"],
+            symbolSize: [0, 8],
+            lineStyle: { color: "#aeb5b0", width: 1.2 },
+            label: { show: true, position: "middle", color: "#c74337", backgroundColor: "#f9faf7", borderColor: "#c9ceca", borderWidth: 1, borderRadius: 12, padding: [4, 8], formatter: yoyText(latestYoy) },
+            data: [[
+              { coord: [periods[previousIndex], totals[previousIndex]], symbol: "none" },
+              { coord: [periods[latestIndex], totals[latestIndex]], symbol: "arrow" },
+            ]],
+          } : undefined,
         },
       ],
     });
