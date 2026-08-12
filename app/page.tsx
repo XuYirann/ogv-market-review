@@ -18,6 +18,15 @@ const sections = [
   { id: "membership", index: "04", label: "会员业务" },
 ];
 
+const categorySections = [
+  { id: "category-animation", index: "01", label: "动画" },
+  { id: "category-horizontal-drama", index: "02", label: "横屏剧集" },
+  { id: "category-vertical-drama", index: "03", label: "竖屏短剧" },
+  { id: "category-variety", index: "04", label: "综艺" },
+  { id: "category-film", index: "05", label: "电影" },
+  { id: "category-documentary", index: "06", label: "纪录片" },
+];
+
 const modules = [
   {
     id: "audience",
@@ -152,13 +161,23 @@ export default function Home() {
       </header>
 
       <div id="top" className="page-frame">
-        <aside className="side-index" aria-label="平台大盘章节">
-          <p>平台大盘</p>
-          {sections.map((section) => (
-            <a key={section.id} href={`#${section.id}`}>
-              <span>{section.index}</span>{section.label}
-            </a>
-          ))}
+        <aside className="side-index" aria-label="报告章节">
+          <div className="side-index-group">
+            <a className="side-index-title" href="#overview">平台大盘</a>
+            {sections.map((section) => (
+              <a key={section.id} href={`#${section.id}`}>
+                <span>{section.index}</span>{section.label}
+              </a>
+            ))}
+          </div>
+          <div className="side-index-group category-index-group">
+            <a className="side-index-title" href="#categories">分品类市场</a>
+            {categorySections.map((section) => (
+              <a key={section.id} href={`#${section.id}`}>
+                <span>{section.index}</span>{section.label}
+              </a>
+            ))}
+          </div>
         </aside>
 
         <div className="report">

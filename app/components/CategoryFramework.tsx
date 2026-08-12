@@ -1,7 +1,3 @@
-"use client";
-
-import { useState } from "react";
-
 type Category = {
   id: string;
   index: string;
@@ -105,9 +101,6 @@ const categories: Category[] = [
 ];
 
 export function CategoryFramework() {
-  const [selectedId, setSelectedId] = useState(categories[0].id);
-  const category = categories.find((item) => item.id === selectedId) ?? categories[0];
-
   return (
     <section id="categories" className="category-framework">
       <header className="category-intro">
@@ -118,52 +111,52 @@ export function CategoryFramework() {
         <p>统一回答市场变化，再保留每个品类真正不同的内容逻辑。当前先确认结构，数据与结论按模块逐步接入。</p>
       </header>
 
-      <div className="category-tabs" role="tablist" aria-label="选择内容品类">
+      <nav className="category-tabs" aria-label="分品类章节快速跳转">
         {categories.map((item) => (
-          <button
+          <a
             key={item.id}
-            type="button"
-            role="tab"
-            aria-selected={item.id === category.id}
-            className={item.id === category.id ? "selected" : ""}
-            onClick={() => setSelectedId(item.id)}
+            href={`#category-${item.id}`}
           >
             <small>{item.index}</small>
             <strong>{item.name}</strong>
             <span>{item.scope}</span>
-          </button>
+          </a>
+        ))}
+      </nav>
+
+      <div className="category-chapters">
+        {categories.map((category) => (
+          <article className="category-detail" id={`category-${category.id}`} key={category.id}>
+            <div className="category-thesis">
+              <span>{category.index} / {category.name}</span>
+              <h3>{category.question}</h3>
+              <p>{category.scope}</p>
+            </div>
+
+            <div className="category-flow">
+              {category.modules.map((module, index) => (
+                <section key={module.title} className="category-module">
+                  <div className="category-module-heading">
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <div>
+                      <h4>{module.title}</h4>
+                      <p>{module.question}</p>
+                    </div>
+                  </div>
+                  <div className="category-view-list">
+                    {module.views.map((view) => <span key={view}>{view}</span>)}
+                  </div>
+                </section>
+              ))}
+            </div>
+
+            <footer className="category-data-footer">
+              <strong>待接数据</strong>
+              <div>{category.sources.map((source) => <span key={source}>{source}</span>)}</div>
+            </footer>
+          </article>
         ))}
       </div>
-
-      <article className="category-detail" id={`category-${category.id}`}>
-        <div className="category-thesis">
-          <span>{category.index} / {category.name}</span>
-          <h3>{category.question}</h3>
-          <p>{category.scope}</p>
-        </div>
-
-        <div className="category-flow">
-          {category.modules.map((module, index) => (
-            <section key={module.title} className="category-module">
-              <div className="category-module-heading">
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <div>
-                  <h4>{module.title}</h4>
-                  <p>{module.question}</p>
-                </div>
-              </div>
-              <div className="category-view-list">
-                {module.views.map((view) => <span key={view}>{view}</span>)}
-              </div>
-            </section>
-          ))}
-        </div>
-
-        <footer className="category-data-footer">
-          <strong>待接数据</strong>
-          <div>{category.sources.map((source) => <span key={source}>{source}</span>)}</div>
-        </footer>
-      </article>
     </section>
   );
 }
