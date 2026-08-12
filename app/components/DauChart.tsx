@@ -192,8 +192,8 @@ function AudienceTrendChart({ data, showHint = true }: { data: AudienceData; sho
             <button className={rangePreset === "5" ? "selected" : ""} type="button" onClick={() => setRange(5)}>近 5 年</button>
           </div>
           <div className="month-controls">
-            <label>开始月份<input type="month" min={firstPeriod} max={endPeriod} value={startPeriod} onChange={(event) => { setStartPeriod(event.target.value); setRangePreset("custom"); }} /></label>
-            <label>结束月份<input type="month" min={startPeriod} max={lastPeriod} value={endPeriod} onChange={(event) => { setEndPeriod(event.target.value); setRangePreset("custom"); }} /></label>
+            <label>开始<input type="month" min={firstPeriod} max={endPeriod} value={startPeriod} onChange={(event) => { setStartPeriod(event.target.value); setRangePreset("custom"); }} /></label>
+            <label>结束<input type="month" min={startPeriod} max={lastPeriod} value={endPeriod} onChange={(event) => { setEndPeriod(event.target.value); setRangePreset("custom"); }} /></label>
           </div>
         </div>
       </div>
