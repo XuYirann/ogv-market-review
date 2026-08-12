@@ -98,11 +98,16 @@ a { color: inherit; text-decoration: none; }
 .audience-charts .dau-chart { height: 410px; }
 .overlap-analysis-group { margin-top: 28px; }
 .overlap-chart-module { margin-top: 22px; border: 1.5px solid #aeb7b0; background: #f9faf7; }
-.overlap-legend { display: flex; flex-wrap: wrap; gap: 10px 20px; padding: 8px 24px 0; }
-.overlap-legend span { display: flex; align-items: center; gap: 7px; color: #4f5851; font-size: 11px; font-weight: 650; }
-.overlap-legend i { width: 9px; height: 9px; }
-.overlap-chart { width: 100%; height: 430px; }
-.overlap-source { margin: 0; padding: 0 24px 20px; color: #7b847e; font-size: 10px; line-height: 1.7; }
+.overlap-chart-module .dau-header { padding-bottom: 6px; }
+.overlap-chart-wrap { position: relative; }
+.overlap-chart { width: 100%; height: 540px; }
+.overlap-direct-labels { position: absolute; inset: 0 20px 0 auto; width: 164px; pointer-events: none; }
+.overlap-direct-labels span { position: absolute; right: 0; width: 164px; display: grid; grid-template-columns: 8px 1fr; column-gap: 8px; align-items: center; font-size: 11px; }
+.overlap-direct-labels span::before { content: ""; width: 8px; height: 8px; background: currentColor; }
+.overlap-direct-labels b { font-weight: 700; }
+.overlap-direct-labels em { grid-column: 2; color: #161917; font-size: 10px; font-style: normal; font-weight: 650; }
+.overlap-direct-labels em.down { color: #c74337; }
+.overlap-source { max-width: 860px; margin: 0; padding: 4px 24px 22px; color: #7b847e; font-size: 10px; line-height: 1.7; }
 .duration-analysis-group { background: transparent; }
 .duration-charts { display: grid; gap: 22px; margin-top: 22px; }
 .duration-chart-module { border: 1.5px solid #aeb7b0; background: #f9faf7; }
@@ -205,6 +210,11 @@ a { color: inherit; text-decoration: none; }
 .horizontal-drama-panel header b { color: var(--muted); font: 500 11px/1 ui-monospace, monospace; }
 .horizontal-drama-chart { width: 100%; height: 390px; }
 .horizontal-drama-source { margin: 10px 0 0; color: var(--muted); font-size: 10px; }
+.horizontal-drama-efficiency { padding-top: 76px; }
+.efficiency-layout { display: grid; grid-template-columns: 1.12fr .88fr; gap: 22px; margin-top: 22px; }
+.efficiency-side { display: grid; gap: 22px; }
+.efficiency-chart { width: 100%; height: 270px; }
+.efficiency-chart-large { height: 618px; }
 footer { display: flex; justify-content: space-between; gap: 30px; padding: 32px 0 40px; border-top: 1px solid var(--ink); color: var(--muted); font-size: 11px; }
 footer p { margin: 0; }
 
@@ -229,6 +239,8 @@ footer p { margin: 0; }
   .section-heading { grid-template-columns: 44px 1fr; }
   .category-module { grid-template-columns: 1fr; gap: 22px; }
   .horizontal-drama-charts { grid-template-columns: 1fr; }
+  .efficiency-layout { grid-template-columns: 1fr; }
+  .efficiency-chart-large { height: 430px; }
   footer { flex-direction: column; }
 }
 

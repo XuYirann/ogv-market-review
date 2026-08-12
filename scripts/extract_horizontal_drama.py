@@ -34,6 +34,9 @@ def main():
     workbook = load_workbook(SOURCE, read_only=True, data_only=True)
     totals = read_sheet(workbook, "byQ_长剧有效播放_亿")
     platforms = read_sheet(workbook, "byQ_分平台top50上新长剧播放_亿")
+    concentration = read_sheet(workbook, "by集中度_top50上新长剧播放_亿")
+    episodes = read_sheet(workbook, "top50上新长剧_平均集数")
+    v30 = read_sheet(workbook, "top50上新长剧_集均V30_万")
     payload = {
         "unit": "亿",
         "source": "云合数据",
@@ -51,6 +54,28 @@ def main():
                 {"name": name, "values": [clean(row.get(name)) for row in platforms]}
                 for name in ["爱奇艺", "腾讯视频", "优酷", "芒果TV"]
             ],
+        },
+        "efficiency": {
+            "periods": [row["quarter"] for row in concentration],
+            "concentration": {
+                "series": [
+                    {"name": "11–50", "values": [clean(row.get("11-50")) for row in concentration]},
+                    {"name": "TOP10", "values": [clean(row.get("top10")) for row in concentration]},
+                ],
+                "totals": [clean(row.get("top50")) for row in concentration],
+            },
+            "episodes": {
+                "series": [
+                    {"name": "TOP10", "values": [clean(row.get("top10")) for row in episodes]},
+                    {"name": "11–50", "values": [clean(row.get("11-50")) for row in episodes]},
+                ],
+            },
+            "v30": {
+                "series": [
+                    {"name": "TOP10", "values": [clean(row.get("top10")) for row in v30]},
+                    {"name": "11–50", "values": [clean(row.get("11-50")) for row in v30]},
+                ],
+            },
         },
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
