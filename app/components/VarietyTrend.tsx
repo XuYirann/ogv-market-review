@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import data from "../data/varietyTrend.json";
 import { EditableInsight } from "./EditableInsight";
 import { type BracketComparison, setBracketAnnotations } from "./chartBrackets";
+import { VarietyTopSeries } from "./VarietyTopSeries";
 
 type QuarterFilter = "Q1" | "Q2" | "Q3" | "Q4" | "all";
 type ChartKind = "total" | "platform";
@@ -183,6 +184,7 @@ export function VarietyTrend() {
         </article>
       </div>
       <p className="horizontal-drama-source variety-source">数据来源：{data.source}；口径说明：上新综艺 TOP50 占上新综艺播放的 90%–95%，网络综艺与电视综艺合计为热播综艺。</p>
+      <VarietyTopSeries />
     </section>
   );
 }

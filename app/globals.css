@@ -277,6 +277,17 @@ a { color: inherit; text-decoration: none; }
 .platform-logo { display: block; width: auto; max-width: 34px; height: 15px; object-fit: contain; }
 .platform-logo-腾讯视频, .platform-logo-芒果TV { max-width: 17px; height: 17px; }
 .platform-logo-优酷 { max-width: 22px; height: 22px; }
+.platform-logo-bilibili { max-width: 30px; height: 16px; }
+.variety-top-series { padding-top: 72px; }
+.variety-top-evidence { position: relative; padding-top: 24px; }
+.variety-top-legend { position: absolute; top: 0; right: 0; display: flex; gap: 16px; color: var(--muted); font-size: 9px; }
+.variety-top-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.variety-top-legend i { width: 15px; height: 8px; background: #c0ccdb; }
+.variety-top-legend .variety-new-bar, .top-series-bar-cell .variety-new-bar { background: #728fb6; }
+.variety-top-grid { grid-template-columns: minmax(138px, 1.36fr) minmax(112px, 1.25fr) minmax(116px, 1.15fr) 94px; }
+.variety-top-quarter .top-series-row { min-height: 34px; }
+.variety-new-tag { display: inline-block; margin-left: 5px; padding: 2px 4px; color: #4e6686; background: #e4eaf1; font-size: 8px; font-style: normal; font-weight: 700; vertical-align: 1px; }
+.variety-platforms { gap: 3px; }
 .top-series-revenue { min-height: 23px; display: inline-flex; align-items: center; justify-content: center; padding: 3px 6px; color: #36413b; font-size: 10px; }
 .top-series-revenue-heat { color: #6f292c; font-weight: 700; }
 .top-series-revenue-note { background: #e7eae6; color: #626b65; font-size: 9px; font-weight: 650; }
