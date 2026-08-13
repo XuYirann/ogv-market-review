@@ -107,6 +107,10 @@ function LongQuarter({ quarter, rows }: { quarter: string; rows: LongSeries[] })
 
 function ShortQuarter({ quarter, rows }: { quarter: string; rows: ShortSeries[] }) {
   const max = Math.max(...short25.map((row) => row.v30), ...short26.map((row) => row.v30));
+  const revenueMax = Math.max(
+    ...short25.map((row) => typeof row.revenue === "number" ? row.revenue : 0),
+    ...short26.map((row) => typeof row.revenue === "number" ? row.revenue : 0),
+  );
   return <article className="top-series-quarter">
     <h6>{quarter}</h6>
     <div className="top-series-grid top-series-grid-short top-series-grid-head"><span>剧名</span><span>集均 V30（万）</span><span>内容题材</span><span>分账金额（万）</span></div>
@@ -114,7 +118,12 @@ function ShortQuarter({ quarter, rows }: { quarter: string; rows: ShortSeries[] 
       <span className="top-series-name">{row.name}</span>
       <span className="top-series-bar-cell"><i style={{ width: `${Math.max(10, row.v30 / max * 62)}%` }} /><b>{row.v30.toLocaleString("zh-CN")}</b></span>
       <span className={`top-series-genre ${genreClass(row.genre)}`}>{row.genre}</span>
-      <span className="top-series-revenue">{typeof row.revenue === "number" ? row.revenue.toLocaleString("zh-CN") : row.revenue}</span>
+      <span
+        className={`top-series-revenue ${typeof row.revenue === "number" ? "top-series-revenue-heat" : "top-series-revenue-note"}`}
+        style={typeof row.revenue === "number" ? { backgroundColor: `rgb(80 111 153 / ${0.08 + row.revenue / revenueMax * 0.2})` } : undefined}
+      >
+        {typeof row.revenue === "number" ? row.revenue.toLocaleString("zh-CN") : row.revenue}
+      </span>
     </div>)}
   </article>;
 }
