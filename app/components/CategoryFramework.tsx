@@ -100,6 +100,8 @@ const categories: Category[] = [
   },
 ];
 
+const underConstruction = new Set(["animation", "vertical-drama"]);
+
 export function CategoryFramework() {
   return (
     <section id="categories" className="category-framework">
@@ -121,7 +123,8 @@ export function CategoryFramework() {
             <div className="category-flow">
               {category.id === "horizontal-drama" && <HorizontalDramaTrend />}
               {category.id === "variety" && <VarietyTrend />}
-              {category.modules.map((module, index) => category.id === "variety" || (category.id === "horizontal-drama" && index <= 3) ? null : (
+              {underConstruction.has(category.id) && <div className="category-under-construction" role="img" aria-label="建设中">🚧</div>}
+              {category.modules.map((module, index) => underConstruction.has(category.id) || category.id === "variety" || (category.id === "horizontal-drama" && index <= 3) ? null : (
                 <section key={module.title} className="category-module">
                   <div className="category-module-heading">
                     <span>{String(index + 1).padStart(2, "0")}</span>
@@ -137,7 +140,7 @@ export function CategoryFramework() {
               ))}
             </div>
 
-            {category.id !== "variety" && <footer className="category-data-footer">
+            {category.id !== "variety" && !underConstruction.has(category.id) && <footer className="category-data-footer">
               <strong>待接数据</strong>
               <div>{category.sources.map((source) => <span key={source}>{source}</span>)}</div>
             </footer>}
