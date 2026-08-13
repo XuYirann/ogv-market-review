@@ -79,7 +79,7 @@ a { color: inherit; text-decoration: none; }
 .section-heading h2 { margin: 0; font-size: 23px; line-height: 1; letter-spacing: -.03em; }
 .section-heading p { margin: 12px 0 0; color: var(--muted); font-size: 15px; }
 .audience-analysis-group { margin-bottom: 18px; background: transparent; }
-.audience-insight { padding: 24px 26px; border: 1.5px solid #aeb7b0; background: #f9faf7; }
+.audience-insight { padding: 10px 0 13px 17px; border: 0; border-left: 2px solid var(--accent); border-bottom: 1px solid #d8ded9; background: transparent; }
 .insight-editor { position: relative; margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.75; letter-spacing: -.01em; outline: none; cursor: text; }
 .insight-editor::before { content: "-"; position: absolute; left: 0; color: var(--ink); }
 .insight-editor > b { font-weight: 750; }
@@ -87,7 +87,7 @@ a { color: inherit; text-decoration: none; }
 .insight-editor strong.positive { color: var(--ink); }
 .insight-editor:hover { background: rgb(23 126 85 / 4%); }
 .insight-editor:focus { background: rgb(23 126 85 / 7%); box-shadow: inset 2px 0 0 var(--accent); }
-.audience-charts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; margin-top: 22px; }
+.audience-charts { width: calc(100% - 28px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; margin: 14px 14px 0; }
 .audience-charts .dau-module { grid-column: auto; min-width: 0; border: 1.5px solid #aeb7b0; }
 .audience-charts .dau-module + .dau-module { border-left: 1.5px solid #aeb7b0; }
 .audience-charts .dau-header { gap: 12px; padding-inline: 18px; }
@@ -98,7 +98,7 @@ a { color: inherit; text-decoration: none; }
 .audience-charts .chart-controls.chart-controls-compact input { width: 86px; height: 26px; padding: 0 5px; font-size: 9px; }
 .audience-charts .dau-chart { height: 350px; }
 .overlap-analysis-group { margin-top: 28px; }
-.overlap-chart-module { margin-top: 22px; border: 1.5px solid #aeb7b0; background: #f9faf7; }
+.overlap-chart-module { width: calc(100% - 28px); margin: 14px 14px 0; border: 1.5px solid #aeb7b0; background: #f9faf7; }
 .overlap-chart-module .dau-header { padding-bottom: 6px; }
 .overlap-chart-wrap { position: relative; }
 .overlap-chart { width: 100%; height: 350px; }
@@ -110,7 +110,7 @@ a { color: inherit; text-decoration: none; }
 .overlap-direct-labels em.down { color: #c74337; }
 .overlap-source { max-width: 860px; margin: 0; padding: 4px 24px 22px; color: #7b847e; font-size: 10px; line-height: 1.7; }
 .duration-analysis-group { background: transparent; }
-.duration-charts { display: grid; gap: 22px; margin-top: 22px; }
+.duration-charts { width: calc(100% - 28px); display: grid; gap: 22px; margin: 14px 14px 0; }
 .duration-chart-module { border: 1.5px solid #aeb7b0; background: #f9faf7; }
 .duration-chart-module + .duration-chart-module { border-top: 1.5px solid #aeb7b0; }
 .duration-controls { min-width: 390px; display: flex; align-items: center; gap: 6px; }
@@ -210,11 +210,11 @@ a { color: inherit; text-decoration: none; }
 .category-data-footer > div { display: flex; flex-wrap: wrap; gap: 8px; }
 .category-data-footer span { padding: 7px 10px; border: 1px solid var(--line); color: var(--muted); font-size: 10px; }
 .horizontal-drama-trend { padding-top: 28px; }
-.horizontal-drama-lead { padding: 22px 26px 24px; border: 1.5px solid #aeb7b0; background: #f9faf7; }
-.horizontal-drama-subhead { display: flex; align-items: baseline; gap: 14px; margin-bottom: 14px; }
+.horizontal-drama-lead { padding: 0; border: 0; background: transparent; }
+.horizontal-drama-subhead { display: flex; align-items: baseline; gap: 14px; margin-bottom: 10px; }
 .horizontal-drama-subhead span { color: var(--accent); font: 700 13px/1 ui-monospace, monospace; }
 .horizontal-drama-subhead h4 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
-.horizontal-drama-lead .audience-insight { padding: 0; border: 0; background: transparent; }
+.horizontal-drama-lead .audience-insight { padding: 10px 0 13px 17px; border: 0; border-left: 2px solid var(--accent); border-bottom: 1px solid #d8ded9; background: transparent; }
 .horizontal-drama-lead .insight-editor { padding-left: 18px; font-size: 14px; line-height: 1.75; }
 .category-detail { position: relative; }
 .horizontal-drama-quarter-filter { position: absolute; top: 25px; right: 0; display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin: 0; }
@@ -222,7 +222,7 @@ a { color: inherit; text-decoration: none; }
 .horizontal-drama-quarter-filter button { min-width: 44px; height: 32px; padding: 0 10px; border: 1px solid var(--line); color: var(--muted); background: #f1f3ef; font: 650 10px/1 ui-monospace, monospace; cursor: pointer; }
 .horizontal-drama-quarter-filter button:hover, .horizontal-drama-quarter-filter button:focus-visible { color: var(--ink); border-color: #9ca59e; outline: none; }
 .horizontal-drama-quarter-filter button.selected { color: #f6f8f5; border-color: var(--navy); background: var(--navy); }
-.horizontal-drama-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 10px; }
+.horizontal-drama-charts { width: calc(100% - 28px); display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 14px 14px 0; }
 .asymmetric-platform-charts { grid-template-columns: minmax(330px, .78fr) minmax(0, 1.22fr); }
 .horizontal-drama-panel { min-width: 0; border: 1.5px solid #aeb7b0; background: #f9faf7; }
 .horizontal-drama-panel header { min-height: 78px; display: flex; align-items: center; justify-content: space-between; padding: 18px 22px 12px; }
@@ -232,7 +232,7 @@ a { color: inherit; text-decoration: none; }
 .horizontal-drama-chart { width: 100%; height: 390px; }
 .horizontal-drama-source { margin: 10px 0 0; color: var(--muted); font-size: 10px; }
 .horizontal-drama-efficiency { padding-top: 76px; }
-.efficiency-layout { display: grid; grid-template-columns: minmax(0, 1.48fr) minmax(360px, .92fr); gap: 18px; margin-top: 22px; }
+.efficiency-layout { width: calc(100% - 28px); display: grid; grid-template-columns: minmax(0, 1.48fr) minmax(360px, .92fr); gap: 18px; margin: 14px 14px 0; }
 .efficiency-side { display: grid; gap: 12px; }
 .efficiency-layout .horizontal-drama-panel header { min-height: 56px; padding: 12px 18px 8px; }
 .efficiency-layout .horizontal-drama-panel header h5 { margin: 0; font-size: 15px; }
@@ -282,7 +282,7 @@ footer p { margin: 0; }
   .signal-strip { grid-template-columns: 1fr; }
   .metric-empty { min-height: 126px; border-right: 0; border-bottom: 1px solid var(--line); }
   .metric-empty:last-child { border-bottom: 0; }
-  .audience-insight { padding: 20px; }
+  .audience-insight { padding: 9px 0 12px 14px; }
   .insight-editor { font-size: 14px; line-height: 1.75; }
   .chart-primary, .analysis-shell { min-height: 330px; }
   .analysis-shell > p { margin-top: 60px; }
@@ -294,6 +294,8 @@ footer p { margin: 0; }
 }
 
 @media (max-width: 640px) {
+  .audience-charts, .duration-charts, .horizontal-drama-charts, .efficiency-layout { width: 100%; margin-left: 0; margin-right: 0; }
+  .overlap-chart-module { width: 100%; margin-left: 0; margin-right: 0; }
   .audience-charts { grid-template-columns: 1fr; }
   .audience-charts .dau-module + .dau-module { border-left: 0; border-top: 1px solid var(--line); }
 }
