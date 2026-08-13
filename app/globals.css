@@ -240,12 +240,27 @@ a { color: inherit; text-decoration: none; }
 .variety-charts .horizontal-drama-panel header div { display: grid; gap: 8px; }
 .variety-charts .horizontal-drama-panel header h5 { margin: 0; }
 .variety-source { width: calc(100% - 28px); margin-left: 14px; line-height: 1.55; }
-.film-charts { width: calc(100% - 28px); display: grid; grid-template-columns: minmax(280px, 30fr) minmax(300px, 35fr) minmax(300px, 35fr); gap: 14px; margin: 14px 14px 0; }
+.film-charts { width: calc(100% - 28px); display: grid; grid-template-columns: minmax(270px, 30fr) minmax(270px, 30fr) minmax(360px, 40fr); gap: 14px; margin: 14px 14px 0; }
 .film-charts .horizontal-drama-panel header { min-height: 70px; padding: 14px 16px 10px; }
 .film-charts .horizontal-drama-panel header h5 { margin: 0; }
 .film-charts .horizontal-drama-panel header div { display: grid; gap: 7px; }
 .film-chart { width: 100%; height: 330px; }
 .film-source { width: calc(100% - 28px); margin-left: 14px; line-height: 1.55; }
+.film-top10 { padding-top: 72px; }
+.film-top10-layout { width: calc(100% - 28px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 14px 14px 0; }
+.film-top10-panel header { min-height: 58px; padding: 14px 18px 10px; }
+.film-top10-panel header h5 { margin: 0; }
+.film-top10-quarters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 0 14px 16px; }
+.film-top10-quarter { min-width: 0; }
+.film-top10-quarter h6 { margin: 0 0 9px; padding-bottom: 8px; border-bottom: 1px solid var(--line); font-size: 14px; text-align: center; }
+.film-top10-list { display: grid; gap: 5px; }
+.film-top10-row { min-height: 29px; display: grid; grid-template-columns: 18px minmax(74px, .94fr) minmax(42px, .78fr) 31px; gap: 5px; align-items: center; font-size: 9px; }
+.film-top10-rank { color: #8b948e; font: 600 8px/1 ui-monospace, monospace; }
+.film-top10-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.film-top10-bar { height: 15px; background: #edf0ec; }
+.film-top10-bar i { display: block; height: 100%; background: #a9bacf; }
+.film-top10-row b { font-size: 9px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.film-top10-source { width: calc(100% - 28px); margin-left: 14px; }
 .horizontal-drama-efficiency { padding-top: 76px; }
 .efficiency-layout { width: calc(100% - 28px); display: grid; grid-template-columns: minmax(0, 1.48fr) minmax(360px, .92fr); gap: 18px; margin: 14px 14px 0; }
 .efficiency-side { display: grid; gap: 12px; }
@@ -333,11 +348,13 @@ footer p { margin: 0; }
   .horizontal-drama-charts { grid-template-columns: 1fr; }
   .asymmetric-platform-charts { grid-template-columns: 1fr; }
   .film-charts { grid-template-columns: 1fr; }
+  .film-top10-layout { grid-template-columns: 1fr; }
   .efficiency-layout { grid-template-columns: 1fr; }
   .efficiency-side { grid-template-columns: 1fr; }
   .efficiency-chart { height: 230px; }
   .efficiency-chart-large { height: 360px; }
   .top-series-quarters { grid-template-columns: 1fr; }
+  .film-top10-quarters { grid-template-columns: 1fr; }
   .horizontal-drama-quarter-filter { position: static; margin: 16px 0 0; }
   footer { flex-direction: column; }
 }
@@ -359,7 +376,7 @@ footer p { margin: 0; }
 }
 
 @media (max-width: 640px) {
-  .audience-charts, .duration-charts, .horizontal-drama-charts, .film-charts, .efficiency-layout, .top-series-evidence { width: 100%; margin-left: 0; margin-right: 0; }
+  .audience-charts, .duration-charts, .horizontal-drama-charts, .film-charts, .film-top10-layout, .efficiency-layout, .top-series-evidence { width: 100%; margin-left: 0; margin-right: 0; }
   .overlap-chart-module { width: 100%; margin-left: 0; margin-right: 0; }
   .audience-charts { grid-template-columns: 1fr; }
   .audience-charts .dau-module + .dau-module { border-left: 0; border-top: 1px solid var(--line); }

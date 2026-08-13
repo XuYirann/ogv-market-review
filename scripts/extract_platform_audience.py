@@ -1,9 +1,11 @@
 """Extract audience matrices used by the website without modifying the source workbook."""
 
 import json
+from datetime import datetime
 from pathlib import Path
 
 from openpyxl import load_workbook
+from openpyxl.utils.datetime import from_excel
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -15,6 +17,8 @@ METRICS = {
 }
 TOTAL_DURATION_SHEET = "platform_audience_总时长"
 TOTAL_DURATION_OUTPUT = "platformAudienceTotalDuration.json"
+OVERLAP_SHEET = "红果vs爱腾MAU构成对比_亿"
+OVERLAP_OUTPUT = "platformAudienceOverlap.json"
 
 
 def main() -> None:
@@ -91,6 +95,30 @@ def main() -> None:
     duration_output = OUTPUT_DIR / TOTAL_DURATION_OUTPUT
     duration_output.write_text(json.dumps(duration_payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print(f"Extracted {len(duration_series)} series x {len(quarters)} quarters to {duration_output}")
+
+    overlap_sheet = workbook[OVERLAP_SHEET]
+    overlap_rows = list(overlap_sheet.iter_rows(min_row=1, max_row=4, max_col=5, values_only=True))
+    overlap_periods = []
+    for value in overlap_rows[0][1:]:
+        if isinstance(value, datetime):
+            overlap_periods.append(value.strftime("%Y-%m"))
+        elif isinstance(value, (int, float)):
+            overlap_periods.append(from_excel(value, workbook.epoch).strftime("%Y-%m"))
+        else:
+            overlap_periods.append(str(value).replace("年", "-").replace("月", "").replace(" ", ""))
+    overlap_payload = {
+        "metric": "MAU构成",
+        "unit": "亿",
+        "source": "QuestMobile",
+        "periods": overlap_periods,
+        "series": [
+            {"name": str(row[0]), "values": [round(float(value), 6) for value in row[1:]]}
+            for row in overlap_rows[1:]
+        ],
+    }
+    overlap_output = OUTPUT_DIR / OVERLAP_OUTPUT
+    overlap_output.write_text(json.dumps(overlap_payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    print(f"Extracted overlap composition to {overlap_output}")
 
 
 if __name__ == "__main__":
