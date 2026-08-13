@@ -61,6 +61,7 @@ const modules = [
 function ModuleSection({ module }: { module: (typeof modules)[number] }) {
   const isAudience = module.id === "audience";
   const isDuration = module.id === "attention";
+  const isUnderConstruction = module.id === "revenue" || module.id === "membership";
   const audienceInsight = audienceQuarterContent.insights[0];
   const durationInsight = durationQuarterContent.insights[0];
   const overlapInsight = overlapQuarterContent.insights[0];
@@ -74,7 +75,9 @@ function ModuleSection({ module }: { module: (typeof modules)[number] }) {
         </div>
       </div>
 
-      {isAudience && <div className="audience-analysis-group">
+      {isUnderConstruction && <div className="category-under-construction" role="img" aria-label="建设中">🚧</div>}
+
+      {!isUnderConstruction && isAudience && <div className="audience-analysis-group">
         <EditableInsight lead={audienceInsight.lead} body={audienceInsight.body} highlights={audienceInsight.highlights} />
         <div className="audience-charts">
           <DauChart />
@@ -82,17 +85,17 @@ function ModuleSection({ module }: { module: (typeof modules)[number] }) {
         </div>
       </div>}
 
-      {isAudience && <div className="overlap-analysis-group">
+      {!isUnderConstruction && isAudience && <div className="overlap-analysis-group">
         <EditableInsight lead={overlapInsight.lead} body={overlapInsight.body} highlights={overlapInsight.highlights} storageKey="ogv-market-review:26q2:overlap-insight" />
         <AudienceOverlapChart />
       </div>}
 
-      {isDuration && <div className="duration-analysis-group">
+      {!isUnderConstruction && isDuration && <div className="duration-analysis-group">
         <EditableInsight lead={durationInsight.lead} body={durationInsight.body} highlights={durationInsight.highlights} storageKey="ogv-market-review:26q2:duration-insight" />
         <DurationStackedCharts />
       </div>}
 
-      {!isDuration && <div className="module-grid">
+      {!isUnderConstruction && !isDuration && <div className="module-grid">
         {!isAudience && <article className="chart-shell chart-primary">
           <div className="chart-header">
             <div>
