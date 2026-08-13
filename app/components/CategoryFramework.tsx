@@ -100,7 +100,7 @@ const categories: Category[] = [
   },
 ];
 
-const underConstruction = new Set(["animation", "vertical-drama", "film", "documentary"]);
+const underConstruction = new Set(["animation", "vertical-drama", "documentary"]);
 
 export function CategoryFramework() {
   return (
@@ -123,8 +123,9 @@ export function CategoryFramework() {
             <div className="category-flow">
               {category.id === "horizontal-drama" && <HorizontalDramaTrend />}
               {category.id === "variety" && <VarietyTrend />}
+              {category.id === "film" && <FilmTrend />}
               {underConstruction.has(category.id) && <div className="category-under-construction" role="img" aria-label="建设中">🚧</div>}
-              {category.modules.map((module, index) => underConstruction.has(category.id) || category.id === "variety" || category.id === "horizontal-drama" ? null : (
+              {category.modules.map((module, index) => underConstruction.has(category.id) || category.id === "variety" || category.id === "horizontal-drama" || category.id === "film" ? null : (
                 <section key={module.title} className="category-module">
                   <div className="category-module-heading">
                     <span>{String(index + 1).padStart(2, "0")}</span>
@@ -140,7 +141,7 @@ export function CategoryFramework() {
               ))}
             </div>
 
-            {category.id !== "variety" && category.id !== "horizontal-drama" && !underConstruction.has(category.id) && <footer className="category-data-footer">
+            {category.id !== "variety" && category.id !== "horizontal-drama" && category.id !== "film" && !underConstruction.has(category.id) && <footer className="category-data-footer">
               <strong>待接数据</strong>
               <div>{category.sources.map((source) => <span key={source}>{source}</span>)}</div>
             </footer>}
@@ -152,3 +153,4 @@ export function CategoryFramework() {
 }
 import { HorizontalDramaTrend } from "./HorizontalDramaTrend";
 import { VarietyTrend } from "./VarietyTrend";
+import { FilmTrend } from "./FilmTrend";
