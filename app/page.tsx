@@ -6,6 +6,8 @@ import { AudienceOverlapChart } from "./components/AudienceOverlapChart";
 import { audienceQuarterContent, durationQuarterContent, overlapQuarterContent } from "./content/26Q2";
 import { CategoryFramework } from "./components/CategoryFramework";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "26Q2 OGV 市场复盘 | 平台大盘",
   description: "可复用的 OGV 季度市场复盘框架",
