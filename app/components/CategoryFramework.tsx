@@ -120,7 +120,8 @@ export function CategoryFramework() {
 
             <div className="category-flow">
               {category.id === "horizontal-drama" && <HorizontalDramaTrend />}
-              {category.modules.map((module, index) => category.id === "horizontal-drama" && index <= 3 ? null : (
+              {category.id === "variety" && <VarietyTrend />}
+              {category.modules.map((module, index) => (category.id === "horizontal-drama" && index <= 3) || (category.id === "variety" && index === 0) ? null : (
                 <section key={module.title} className="category-module">
                   <div className="category-module-heading">
                     <span>{String(index + 1).padStart(2, "0")}</span>
@@ -147,3 +148,4 @@ export function CategoryFramework() {
   );
 }
 import { HorizontalDramaTrend } from "./HorizontalDramaTrend";
+import { VarietyTrend } from "./VarietyTrend";
