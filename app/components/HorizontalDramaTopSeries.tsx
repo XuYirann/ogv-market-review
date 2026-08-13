@@ -120,7 +120,7 @@ function ShortQuarter({ quarter, rows }: { quarter: string; rows: ShortSeries[] 
       <span className={`top-series-genre ${genreClass(row.genre)}`}>{row.genre}</span>
       <span
         className={`top-series-revenue ${typeof row.revenue === "number" ? "top-series-revenue-heat" : "top-series-revenue-note"}`}
-        style={typeof row.revenue === "number" ? { backgroundColor: `rgb(80 111 153 / ${0.08 + row.revenue / revenueMax * 0.2})` } : undefined}
+        style={typeof row.revenue === "number" ? { backgroundColor: `rgb(190 72 76 / ${0.14 + row.revenue / revenueMax * 0.28})` } : undefined}
       >
         {typeof row.revenue === "number" ? row.revenue.toLocaleString("zh-CN") : row.revenue}
       </span>
