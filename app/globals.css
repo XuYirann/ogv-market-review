@@ -238,6 +238,39 @@ a { color: inherit; text-decoration: none; }
 .efficiency-layout .horizontal-drama-panel header h5 { margin: 0; font-size: 15px; }
 .efficiency-chart { width: 100%; height: 160px; }
 .efficiency-chart-large { height: 388px; }
+.horizontal-drama-top-series { padding-bottom: 8px; }
+.top-series-part { margin-top: 26px; }
+.top-series-part + .top-series-part { margin-top: 38px; padding-top: 28px; border-top: 1px solid var(--line); }
+.top-series-part > h5 { display: flex; align-items: baseline; gap: 9px; margin: 0 0 9px; font-size: 16px; font-weight: 650; letter-spacing: -.02em; }
+.top-series-part > h5 span { color: var(--ink); font-weight: 500; }
+.top-series-evidence { width: calc(100% - 28px); margin: 14px 14px 0; }
+.top-series-quarters { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+.top-series-quarter { min-width: 0; padding: 15px 16px 12px; border: 1.5px solid #aeb7b0; background: #f9faf7; }
+.top-series-quarter h6 { margin: 0 0 12px; font-size: 15px; font-weight: 700; }
+.top-series-grid { display: grid; gap: 8px; align-items: center; }
+.top-series-grid-long { grid-template-columns: minmax(84px, 1.03fr) minmax(116px, 1.42fr) minmax(118px, 1.35fr) 78px; }
+.top-series-grid-short { grid-template-columns: minmax(108px, 1.2fr) minmax(100px, 1.05fr) minmax(118px, 1.25fr) 78px; }
+.top-series-grid-head { padding-bottom: 7px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 10px; }
+.top-series-row { min-height: 32px; border-bottom: 1px solid rgb(216 221 216 / 58%); font-size: 11px; }
+.top-series-row:last-child { border-bottom: 0; }
+.top-series-name, .top-series-genre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.top-series-bar-cell { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.top-series-bar-cell i { height: 16px; flex: 0 0 auto; background: #c0ccdb; }
+.top-series-bar-cell b, .top-series-revenue { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.top-series-bar-cell b { font-size: 10px; font-weight: 650; }
+.top-series-genre { font-weight: 650; }
+.genre-love { color: #c56f86; }
+.genre-suspense { color: #506f99; }
+.genre-reality { color: #648384; }
+.genre-period { color: #9b7358; }
+.genre-fantasy { color: #746b9c; }
+.genre-male { color: #527b68; }
+.genre-other { color: #767d78; }
+.top-series-platforms { min-height: 22px; display: flex; align-items: center; gap: 4px; overflow: visible; }
+.platform-logo { display: block; width: auto; max-width: 34px; height: 15px; object-fit: contain; }
+.platform-logo-腾讯视频, .platform-logo-芒果TV { max-width: 17px; height: 17px; }
+.platform-logo-优酷 { max-width: 22px; height: 22px; }
+.top-series-revenue { font-size: 10px; color: #485149; }
 footer { display: flex; justify-content: space-between; gap: 30px; padding: 32px 0 40px; border-top: 1px solid var(--ink); color: var(--muted); font-size: 11px; }
 footer p { margin: 0; }
 
@@ -273,6 +306,7 @@ footer p { margin: 0; }
   .efficiency-side { grid-template-columns: 1fr; }
   .efficiency-chart { height: 230px; }
   .efficiency-chart-large { height: 360px; }
+  .top-series-quarters { grid-template-columns: 1fr; }
   .horizontal-drama-quarter-filter { position: static; margin: 16px 0 0; }
   footer { flex-direction: column; }
 }
@@ -294,7 +328,7 @@ footer p { margin: 0; }
 }
 
 @media (max-width: 640px) {
-  .audience-charts, .duration-charts, .horizontal-drama-charts, .efficiency-layout { width: 100%; margin-left: 0; margin-right: 0; }
+  .audience-charts, .duration-charts, .horizontal-drama-charts, .efficiency-layout, .top-series-evidence { width: 100%; margin-left: 0; margin-right: 0; }
   .overlap-chart-module { width: 100%; margin-left: 0; margin-right: 0; }
   .audience-charts { grid-template-columns: 1fr; }
   .audience-charts .dau-module + .dau-module { border-left: 0; border-top: 1px solid var(--line); }
