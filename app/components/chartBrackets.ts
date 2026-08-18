@@ -42,9 +42,9 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
     const labelFontSize = item.labelFontSize ?? 8;
     const bubbleHeight = labelFontSize + 10;
     const bubbleWidth = Math.max(36, item.label.length * (labelFontSize * .92) + 14);
-    const trendColor = item.label.trim().startsWith("+") || item.label.includes("同比 +") ? "#161917" : "#c74337";
+    const trendColor = item.label.includes("+") ? "#161917" : "#c74337";
     if (item.variant === "sideLabel") {
-      const labelX = chart.getWidth() - 102;
+      const labelX = Math.min(chart.getWidth() - 88, chart.getWidth() - 102 + (item.xOffset ?? 0));
       const labelY = item.labelY ?? current[1] + (item.labelYShift ?? 0);
       graphics.push({
         id: `comparison-${index}`,

@@ -27,8 +27,6 @@ const platformOrder = [
   "红果免费短剧",
   "红果免费漫剧",
   "河马剧场",
-  "长视频平台",
-  "短剧平台",
 ];
 
 const defaultPlatforms = platformOrder;
@@ -183,7 +181,6 @@ function AudienceTrendChart({ data, showHint = true }: { data: AudienceData; sho
     <article className="dau-module">
       <div className="dau-header">
         <div>
-          <span>平台用户趋势</span>
           <h3>{data.metric}（{data.unit}）</h3>
         </div>
         <div className="chart-controls chart-controls-compact">

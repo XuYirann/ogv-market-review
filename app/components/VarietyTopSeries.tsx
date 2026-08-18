@@ -11,11 +11,11 @@ type VarietySeries = {
 };
 
 const platformLogos: Record<string, string> = {
-  爱奇艺: "/ogv-market-review/platform-logos/iqiyi.png",
-  腾讯视频: "/ogv-market-review/platform-logos/tencent-video.png",
-  芒果TV: "/ogv-market-review/platform-logos/mango-tv.png",
-  优酷: "/ogv-market-review/platform-logos/youku.png",
-  bilibili: "/ogv-market-review/platform-logos/bilibili.png",
+  爱奇艺: "/platform-logos/iqiyi.png",
+  腾讯视频: "/platform-logos/tencent-video.png",
+  芒果TV: "/platform-logos/mango-tv.png",
+  优酷: "/platform-logos/youku.png",
+  bilibili: "/platform-logos/bilibili.png",
 };
 
 const variety25: VarietySeries[] = [

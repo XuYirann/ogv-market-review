@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 type Category = {
   id: string;
   index: string;
@@ -40,23 +44,8 @@ const categories: Category[] = [
     sources: ["云合剧集明细", "上新项目表", "题材与量级标签", "待播国产剧统计"],
   },
   {
-    id: "vertical-drama",
-    index: "03",
-    name: "竖屏短剧",
-    scope: "真人短剧 · AI 短剧",
-    question: "AI 内容正在替代哪部分真人供给，用户需求发生了什么变化？",
-    modules: [
-      { title: "市场结构", question: "真人与 AI 短剧的规模如何消长？", views: ["收入与消耗趋势", "真人 / AI 占比"] },
-      { title: "题材需求", question: "男女性频与题材偏好如何迁移？", views: ["题材消耗占比", "用户性别结构"] },
-      { title: "内容形态", question: "仿真人、漫剧与演绎内容谁更有效？", views: ["形态消耗占比", "上新量与剧目 ARPU"] },
-      { title: "头部内容", question: "爆款率和头部题材是否出现突破？", views: ["头部项目榜", "爆款率对比"] },
-      { title: "产业判断", question: "成本与产能迁移会如何影响供给？", views: ["制作效率", "平台政策与产能"] },
-    ],
-    sources: ["短剧投流数据", "平台收入数据", "项目榜单", "平台政策追踪"],
-  },
-  {
     id: "variety",
-    index: "04",
+    index: "03",
     name: "综艺",
     scope: "长综艺 · 新综艺",
     question: "存量综 N 代主导的市场里，是否出现新的节目模式和平台机会？",
@@ -71,7 +60,7 @@ const categories: Category[] = [
   },
   {
     id: "film",
-    index: "05",
+    index: "04",
     name: "电影",
     scope: "院线新片 · 存量影片",
     question: "院线供给低迷如何传导至网络播放与平台份额？",
@@ -86,7 +75,7 @@ const categories: Category[] = [
   },
   {
     id: "documentary",
-    index: "06",
+    index: "05",
     name: "纪录片",
     scope: "头部项目 · 模式观察",
     question: "哪些题材与短时长形态更适合平台消费和商业合作？",
@@ -100,9 +89,10 @@ const categories: Category[] = [
   },
 ];
 
-const underConstruction = new Set(["animation", "vertical-drama", "documentary"]);
+const underConstruction = new Set(["animation"]);
 
 export function CategoryFramework() {
+  const [documentaryQuarter, setDocumentaryQuarter] = useState<DocumentaryQuarter>("26Q2");
   return (
     <section id="categories" className="category-framework">
       <header className="category-intro">
@@ -118,14 +108,16 @@ export function CategoryFramework() {
             <div className="category-thesis">
               <span>2.{Number(category.index)}</span>
               <h3>{category.name}</h3>
+              {category.id === "documentary" && <DocumentaryQuarterSelect value={documentaryQuarter} onChange={setDocumentaryQuarter} />}
             </div>
 
             <div className="category-flow">
               {category.id === "horizontal-drama" && <HorizontalDramaTrend />}
               {category.id === "variety" && <VarietyTrend />}
               {category.id === "film" && <FilmTrend />}
+              {category.id === "documentary" && <DocumentaryRanking quarter={documentaryQuarter} />}
               {underConstruction.has(category.id) && <div className="category-under-construction" role="img" aria-label="建设中">🚧</div>}
-              {category.modules.map((module, index) => underConstruction.has(category.id) || category.id === "variety" || category.id === "horizontal-drama" || category.id === "film" ? null : (
+              {category.modules.map((module, index) => underConstruction.has(category.id) || category.id === "variety" || category.id === "horizontal-drama" || category.id === "film" || category.id === "documentary" ? null : (
                 <section key={module.title} className="category-module">
                   <div className="category-module-heading">
                     <span>{String(index + 1).padStart(2, "0")}</span>
@@ -141,7 +133,7 @@ export function CategoryFramework() {
               ))}
             </div>
 
-            {category.id !== "variety" && category.id !== "horizontal-drama" && category.id !== "film" && !underConstruction.has(category.id) && <footer className="category-data-footer">
+            {category.id !== "variety" && category.id !== "horizontal-drama" && category.id !== "film" && category.id !== "documentary" && !underConstruction.has(category.id) && <footer className="category-data-footer">
               <strong>待接数据</strong>
               <div>{category.sources.map((source) => <span key={source}>{source}</span>)}</div>
             </footer>}
@@ -154,3 +146,4 @@ export function CategoryFramework() {
 import { HorizontalDramaTrend } from "./HorizontalDramaTrend";
 import { VarietyTrend } from "./VarietyTrend";
 import { FilmTrend } from "./FilmTrend";
+import { DocumentaryQuarterSelect, DocumentaryRanking, type DocumentaryQuarter } from "./DocumentaryRanking";
