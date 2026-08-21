@@ -7,12 +7,12 @@ import { EditableInsight } from "./EditableInsight";
 type Rank = number | null;
 export type DocumentaryQuarter = keyof typeof data.comparisons;
 const platformLogos: Record<string, string> = {
-  爱奇艺: "/platform-logos/iqiyi.png",
-  腾讯视频: "/platform-logos/tencent-video.png",
-  芒果TV: "/platform-logos/mango-tv.png",
-  优酷: "/platform-logos/youku.png",
-  B站: "/platform-logos/bilibili.png",
-  央视频: "/platform-logos/cctv-video.png",
+  爱奇艺: "/ogv-market-review/platform-logos/iqiyi.png",
+  腾讯视频: "/ogv-market-review/platform-logos/tencent-video.png",
+  芒果TV: "/ogv-market-review/platform-logos/mango-tv.png",
+  优酷: "/ogv-market-review/platform-logos/youku.png",
+  B站: "/ogv-market-review/platform-logos/bilibili.png",
+  央视频: "/ogv-market-review/platform-logos/cctv-video.png",
 };
 
 function DocumentaryPlatforms({ name }: { name: string }) {
