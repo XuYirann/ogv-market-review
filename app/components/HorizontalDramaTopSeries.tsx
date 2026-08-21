@@ -139,6 +139,7 @@ export function LongDramaTopSeries() {
         />
       </div>
       <div className="top-series-evidence"><div className="top-series-quarters"><LongQuarter quarter="25Q2" rows={long25} /><LongQuarter quarter="26Q2" rows={long26} /></div></div>
+      <p className="horizontal-drama-source">数据来源：云和数据</p>
     </section>;
 }
 

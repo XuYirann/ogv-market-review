@@ -145,6 +145,7 @@ function Top50Module() {
       <article className="horizontal-drama-panel"><header><h5>TOP50 国创有效播放（亿）</h5></header><Top50Chart kind="structure" /></article>
       <article className="horizontal-drama-panel"><header><h5>26Q2 TOP10 播放明细</h5></header><Top10DetailTable /></article>
     </div>
+    <p className="horizontal-drama-source animation-source">注：B 站播放已用站内数据修正；数据来源：云和数据，战略发展部分析。</p>
   </section>;
 }
 
@@ -315,10 +316,10 @@ export function AnimationTrend() {
     <div className="horizontal-drama-lead">
       <div className="horizontal-drama-subhead"><span>01</span><h4>动画大盘趋势</h4></div>
       <EditableInsight
-        lead="动画大盘继续收缩，国创降幅更明显"
-        body="26Q2 动画有效播放 138.9 亿，同比下降 25%；其中日番 35.1 亿，同比下降 21%，国创 101.2 亿，同比下降 27%。分平台看，B站日番播放 24.5 亿，同比下降 8%，表现相对稳健；腾讯视频国创播放降至 61.7 亿，同比下降 36%，是国创大盘下滑的主要来源。"
-        highlights={["138.9 亿", "下降 25%", "35.1 亿", "下降 21%", "101.2 亿", "下降 27%", "24.5 亿", "下降 8%", "61.7 亿", "下降 36%"]}
-        storageKey="ogv-market-review:26q2:animation-trend-v1"
+        lead="番剧"
+        body={"23Q1 以来（有复盘数据以来）同比播放持续下跌，本季度下跌幅度（同比 -17%）与 25Q2（同比 -18%）相比略有收窄；分平台看，26Q1 各平台有效播放同比均有不同程度下跌，B 站下跌幅度最小。\n国创：24Q2 以来连续 9 个季度同比播放下跌，本季度下跌幅度（同比 -25%）较 25Q1（同比 -15%）大幅扩大；分平台看，26Q1 各平台有效播放同比均有不同程度下跌，优酷跌幅最小（同比 -2%），B 站跌幅第二小（同比 -12%），爱奇艺（同比 -22%）、腾讯（同比 -36%）跌幅明显。"}
+        highlights={["国创："]}
+        storageKey="ogv-market-review:26q2:animation-trend-v2"
       />
     </div>
     <div className="horizontal-drama-quarter-filter" aria-label="选择季度">
@@ -330,7 +331,7 @@ export function AnimationTrend() {
       <article className="horizontal-drama-panel"><header><h5>byQ 分平台日番有效播放（亿）</h5></header><AnimationChart kind="japanese" filter={filter} /></article>
       <article className="horizontal-drama-panel"><header><h5>byQ 分平台国创有效播放（亿）</h5></header><AnimationChart kind="chinese" filter={filter} /></article>
     </div>
-    <p className="horizontal-drama-source animation-source">注：仅包括爱优腾B站 5 分钟以上内容；数据来源：{data.source}。</p>
+    <p className="horizontal-drama-source animation-source">注：云和数据对爱优腾存在高估、对 B 站存在低估，B 站播放已用站内数据修正；仅包括爱优腾B站 5 分钟以上内容；数据来源：{data.source}。</p>
     <section className="animation-new-release-section">
       <div className="horizontal-drama-lead">
         <div className="horizontal-drama-subhead"><span>02</span><h4>国创长片新作下拆</h4></div>
@@ -345,7 +346,7 @@ export function AnimationTrend() {
         <article className="horizontal-drama-panel"><header><h5>分平台有效播放（亿）</h5></header><NewReleaseChart filter={filter} /></article>
         <article className="horizontal-drama-panel"><header><h5>分平台上新及独播数量</h5></header><SupplyPanel filter={filter} /></article>
       </div>
-      <p className="horizontal-drama-source animation-source">云和数据对爱优腾存在高估、对 B 站存在低估，此页 B 站播放已用站内数据修正；独播指内容只有单平台可播放，不代表真正有独播版权。数据来源：{data.source}。</p>
+      <p className="horizontal-drama-source animation-source">注：B 站播放已用站内数据修正；独播指内容只有单平台可播放，不代表真正有独播版权。数据来源：{data.source}。</p>
       <VvRankingModule />
     </section>
     <Top50Module />
