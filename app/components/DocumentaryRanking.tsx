@@ -55,8 +55,8 @@ export function DocumentaryRanking({ quarter }: { quarter: DocumentaryQuarter })
     <section className="documentary-ranking">
       <div className="horizontal-drama-lead documentary-lead" key={quarter}>
         <EditableInsight
-          lead={`${quarter} 头部题材向${leadingGenre.genre}集中`}
-          body={`${quarter} 月榜共覆盖 ${currentTotal} 个项目，较去年同期 ${previousTotal} 个${change >= 0 ? "增长" : "减少"} ${Math.abs(change)}%；${leadingGenre.genre}以 ${leadingGenre.currentCount} 个项目成为本季最集中题材。${newGenres.length ? `新增题材为${newGenres.join("、")}` : "本季无新增题材"}${disappearedGenres.length ? `，${disappearedGenres.join("、")}本季未再上榜。` : "。"}`}
+          lead="头部观察"
+          body="26Q2 月榜 TOP 内容主要题材为职业纪实、医疗、自然；头部内容中 B 站覆盖率高，仅 2 部作品 B 站没有播出（十三邀、了不起的妈妈）。"
           highlights={[`${currentTotal} 个项目`, `${previousTotal} 个`, `${Math.abs(change)}%`, `${leadingGenre.currentCount} 个项目`, ...newGenres, ...disappearedGenres]}
           storageKey={`ogv-market-review:documentary:${quarter}:insight-v1`}
         />

@@ -45,7 +45,7 @@ export function FilmBoxOffice() {
 
   return <section className="horizontal-drama-efficiency film-box-office">
     <div className="horizontal-drama-lead"><div className="horizontal-drama-subhead"><span>04</span><h4>院线票房表现</h4></div>
-      <EditableInsight lead="Q2票房同比修复，但仍未回到前期水位" body="26Q2 院线电影票房 54.8 亿，同比回升 13%；但较 23Q2 的 104.1 亿仍下降 47%，院线供给与票房水位仍偏低。" highlights={["54.8 亿","回升 13%","104.1 亿","下降 47%"]} storageKey="ogv-market-review:26q2:film-box-office-v1"/>
+      <EditableInsight lead="Q2票房同比修复，但仍未回到前期水位" body="26Q2 院线电影票房 54.8 亿，同比回升 13%；但仍处低位，后续线上新供给继续承压。" highlights={["54.8 亿","回升 13%","仍处低位"]} storageKey="ogv-market-review:26q2:film-box-office-v1"/>
     </div>
     <article className="horizontal-drama-panel film-box-office-panel">
       <header className="film-box-office-header"><div><h5>byQ 院线电影票房（亿）</h5><span>默认展示 23Q2 至今</span></div>

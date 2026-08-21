@@ -161,7 +161,7 @@ export function HorizontalDramaTrend() {
     <section className="horizontal-drama-trend">
       <div className="horizontal-drama-lead">
         <div className="horizontal-drama-subhead"><span>01</span><h4>横屏长剧大盘趋势</h4></div>
-        <EditableInsight lead="长剧播放继续下滑，热播剧也在跌" body={body} highlights={["411 亿", pct(totalYoy), "152 亿", pct(newYoy), "下降 16%、52%", "增长 3%", "5 亿增至 13 亿"]} storageKey="ogv-market-review:26q2:horizontal-drama-trend-v2" />
+        <EditableInsight lead="长剧播放大盘与热播剧播放同步下跌" body="26Q2 长剧有效播放 411 亿（同比 -20%）。芒果TV少量回升，主要来自 2 部高投入的独家剧集《良陈美锦》《耀眼》，局部供给驱动增长，但不影响大盘下行。" highlights={["411 亿", "同比 -20%", "芒果TV少量回升"]} storageKey="ogv-market-review:26q2:horizontal-drama-trend-v2" />
       </div>
       <div className="horizontal-drama-quarter-filter" aria-label="选择季度">
         <span>显示季度</span>
