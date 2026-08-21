@@ -236,6 +236,7 @@ export function RevenueStructureSection() {
         <RevenueTrendChart title="会员数（亿）" unit="亿" rows={data.members as MetricRow[]} decimals={2} />
         <RevenueTrendChart title="会员 ARPPU（元/月）" unit="元/月" rows={data.arppu as MetricRow[]} decimals={1} />
       </div>
+      <p className="short-revenue-source">注：腾讯视频、爱奇艺为日均会员数，芒果 TV、优酷为季度末会员数；ARPPU=季度会员总收入/期末会员数/3；数据来源：QM，公司年报，专家访谈，战略发展部分析。</p>
     </div>
 
     <div className="revenue-analysis-group revenue-analysis-secondary">

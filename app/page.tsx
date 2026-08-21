@@ -6,6 +6,7 @@ import { AudienceOverlapChart } from "./components/AudienceOverlapChart";
 import { audienceQuarterContent, durationQuarterContent, overlapQuarterContent } from "./content/26Q2";
 import { CategoryFramework } from "./components/CategoryFramework";
 import { RevenueStructureSection } from "./components/RevenueStructureSection";
+import { QuarterSummary } from "./components/QuarterSummary";
 
 export const dynamic = "force-static";
 
@@ -156,6 +157,7 @@ export default function Home() {
       <div id="top" className="page-frame">
         <aside className="side-index" aria-label="报告章节">
           <div className="side-index-group">
+            <a className="side-index-title" href="#summary">本季判断</a>
             <a className="side-index-title" href="#overview">平台大盘</a>
             {sections.map((section) => (
               <a key={section.id} href={`#${section.id}`}>
@@ -174,6 +176,11 @@ export default function Home() {
         </aside>
 
         <div className="report">
+          <section id="summary" className="quarter-summary">
+            <div className="quarter-summary-heading"><span>26Q2</span><h1>本季判断</h1></div>
+            <QuarterSummary />
+          </section>
+
           <section id="overview" className="hero">
             <div className="hero-copy">
               <p className="eyebrow">PART 01</p>
