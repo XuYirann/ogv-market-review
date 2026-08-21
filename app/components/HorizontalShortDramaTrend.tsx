@@ -179,7 +179,7 @@ export function HorizontalShortDramaTrend({ filter }: { filter: QuarterFilter })
   return <section className="horizontal-drama-efficiency horizontal-short-drama">
     <div className="horizontal-drama-lead">
       <div className="horizontal-drama-subhead"><span>03</span><h4>横屏短剧大盘趋势</h4></div>
-      <EditableInsight lead="短剧大盘回升，但上新增长有限，平台分化明显" body={body} highlights={[model.total.totals[currentIndex]!.toFixed(1) + " 亿", pct(totalYoy), Number(newSeries.values[currentIndex]).toFixed(1) + " 亿", pct(newYoy), pct(otherYoy), platformTotal.toFixed(1) + " 亿", pct(platformYoy), pct(platformChanges["爱奇艺"]), pct(platformChanges["腾讯视频"]), pct(platformChanges["优酷"])]} storageKey="ogv-market-review:26q2:horizontal-short-drama" />
+      <EditableInsight lead="短剧大盘回升" body="但主要由爱奇艺头部定制的《灵魂摆渡·十年》带动，其他内容水位较低。" highlights={["《灵魂摆渡·十年》"]} storageKey="ogv-market-review:26q2:horizontal-short-drama" />
     </div>
     <div className="horizontal-drama-charts asymmetric-platform-charts">
       <article className="horizontal-drama-panel"><header><h5>byQ 横屏短剧有效播放（亿）</h5></header><ShortDramaChart kind="total" filter={filter} /></article>

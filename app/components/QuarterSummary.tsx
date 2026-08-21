@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
-export function QuarterSummary() {
+function SummaryDocument({ title, contentId, children }: { title: string; contentId: string; children: ReactNode }) {
   const [expanded, setExpanded] = useState(false);
-
   return <div className={`quarter-summary-document${expanded ? " is-expanded" : " is-collapsed"}`}>
-    <button className="quarter-summary-toggle" type="button" aria-expanded={expanded} aria-controls="quarter-summary-content" onClick={() => setExpanded((value) => !value)}>
-      <span>{expanded ? "收起全文" : "展开查看完整判断"}</span><b aria-hidden="true">{expanded ? "−" : "+"}</b>
+    <button className="quarter-summary-toggle" type="button" aria-expanded={expanded} aria-controls={contentId} onClick={() => setExpanded((value) => !value)}>
+      <span className="quarter-summary-toggle-label"><strong>{title}</strong><small>{expanded ? "点击收起" : "点击展开查看"}</small></span><b aria-hidden="true">{expanded ? "−" : "+"}</b>
     </button>
-    {expanded && <div id="quarter-summary-content" className="quarter-summary-content quarter-summary-static">
+    {expanded && <div id={contentId} className="quarter-summary-content quarter-summary-static">{children}</div>}
+  </div>;
+}
+
+function OgvSummaryContent() {
+  return <>
       <h2>平台整体</h2>
       <ol>
         <li><strong>长视频平台的用户、时长、收入继续收缩，短剧平台持续高速增长</strong>
@@ -57,6 +61,63 @@ export function QuarterSummary() {
         <li><strong>电影：26Q2 新上新院线电影播放 9.8 亿，</strong>同比 -8%。<strong>B 站覆盖院线新片 TOP50 中的 33 部，</strong>覆盖率升至 66%，单片份额较高的仍为动画电影和海外片。院线票房 26Q2 54.8 亿，仍处低位，<strong>后续线上新供给继续承压。</strong></li>
         <li><strong>纪录片：</strong>26Q2 月榜 TOP 内容主要题材为<strong>职业纪实、医疗、自然</strong>；头部内容中<strong>B 站覆盖率高，仅 2 部作品 B 站没有播出</strong>（《十三邀》《了不起的妈妈》）。</li>
       </ol>
-    </div>}
+  </>;
+}
+
+function AiSummaryContent() {
+  return <>
+    <h2>现状总结</h2>
+    <ul>
+      <li><strong>OGV 平台的 AI 内容仍处于验证期。</strong>头部精品项目预计到 2026 年底至 2027 年陆续交付，部分内容预告质量较高，但内容效果和商业回报尚待验证；腰尾部分账内容 Q2 上线 6 部，但仅体现制作降本，尚未带来播放、收入或商业模式上的突破。</li>
+      <li><strong>反而是抖音等 UGC 平台，AI 内容已跑通变现、快速增长中，头部内容开始精品化。</strong>抖音 AI 创作者通过商单和激励初步跑通变现，MCN 在加速入场，进入加速增长阶段。在 AI 大赛等活动引导下，头部内容从猎奇和视觉刺激转向精品原创剧情，部分作品已接近优质 OGV 水准，并进一步催生 AI 偶像、AI 演员等新内容形态。AI 正在把过去成本过高、难以形成 UGC 供给的内容，转化为规模化的新供给。</li>
+    </ul>
+
+    <h2>趋势判断</h2>
+    <ul>
+      <li><strong>AI 目前对 OGV 只是生产的边际改善，难转化为供给收入增长。</strong>各平台仍沿用“头部定制、腰尾部分账”的传统模式，供给方、规模和质量均未发生变化；平台也在尝试引入 UGC 创作者，但中心化分发不适配高频长尾的 UGC 内容。OGV 的瓶颈不只在 AI 能力，而在原有供给与分发机制。</li>
+      <li><strong>下个阶段的关键是争夺优质 AI 原生创作者。</strong>AI 原生创作者仍在快速增长阶段，可以提供稳定分发和变现的平台，能更快吸引到这波增量创作者。目前来看，OGV 平台只是用 AI 优化旧内容体系，而抖音等 UGC 平台是在批量吸引 AI 新供给。</li>
+    </ul>
+
+    <h2>OGV — AI 内容仍处于验证期</h2>
+    <ul>
+      <li><strong>AI 影视（剧集 / 电影）：</strong>
+        <ul>
+          <li>平台投资的精品剧集 / 电影仍在尝试阶段，2026 年底至 2027 年初可见成品，效果待验证。爱奇艺、腾讯投入最大，规划数量在几十部，欢娱传媒、长信传媒等头部公司参与；其中欢娱有 3 部预告片上线，题材市场化，剧情和叙事节奏优质，画面相比原有实拍内容有突破，需要持续关注。</li>
+          <li>分账剧集 / 电影 Q2 已有 5 部 AI 内容上线，只降本无提效，无商业模式和收入突破。原有分账玩家在尝试 AI 剧集、AI 网络电影，题材以志怪、悬疑、甜宠等传统题材为主，商业模式依然是会员 + 分账；成片效果看只有降本没有增效，也没有带来更高收入。</li>
+        </ul>
+      </li>
+      <li><strong>AI 横屏动画：</strong>
+        <ul>
+          <li>头部的单点项目可依靠 AI 提效，主要为年番 IP，如腾讯《斗罗大陆》、爱奇艺《无敌剑域》。</li>
+          <li>腰尾部走原有分账模式。爱奇艺、腾讯、优酷均发布专门针对横屏 AI 动画的分账规则，但整体供给偏腰尾部内容填充（1–2k / min，各平台日供几十到几百部）。</li>
+        </ul>
+      </li>
+      <li><strong>AI 综艺、AI 互动内容：</strong>仍在创新品类尝试中。AI 互动影游方面，腾讯有 400 万成本的末世题材立项；爱奇艺、腾讯视频、阿里等均发布互动影游制作相关工具和能力。AI 综艺主要由芒果尝试，纯原创 AI 综艺《幻音歌手》等正在规划。</li>
+      <li><strong>竖屏 AI 短剧：</strong>各家均在批量化布局。</li>
+    </ul>
+
+    <h2>UGC — 实现了 AI 内容供给、商业化与质量的突破</h2>
+    <ul>
+      <li><strong>创作者：抖音 AIGC 创作者增速快，且已经靠商单和平台激励跑通变现。</strong>
+        <ul>
+          <li>6 月 AI 创作者：抖音 8.4 万（1 万粉以上，环比增速 30%）、B 站 5.4 万（1 千粉以上），B 站占整体 40%。</li>
+          <li>抖音正在持续激励优质 AI 创作者，现金激励高于真人内容，并持续举办活动、大赛和签约创作者。</li>
+          <li>抖音 AI 账号相比真人账号涨粉快、成本低，变现已经跑通；头部 AI 账号月收入可超过百万元（商单 80%、激励 20%）。头部 MCN 已经入场：麦芽以 40 人团队运营 200 个 AI 账号，蜂群以 30 人团队运营 200 多个 AI 账号，且均以抖音为主阵地。</li>
+        </ul>
+      </li>
+      <li><strong>头部内容：抖音 AI 内容正在逐渐精品化，已区别于早期依靠视觉刺激、短平快消费的内容。</strong>
+        <ul>
+          <li>AI 影视、AI 二次元内容最多，占头部内容的 60%；其中精品原创剧情内容已占 30%（工业化内容占比 35%），并出现《被裁掉的女孩》《万物生》等超头部连载内容，制作和剧情水平具备超过头部 OGV 内容的潜力。</li>
+          <li>AI 偶像、AI 演员值得关注。大量 AI 虚拟人账号已开始依靠 AI 剧情、综艺内容起号，如《被裁掉的女孩》主演方桃子个人账号粉丝量 40 万，《十万个挑战》综艺主理人账号粉丝量 216 万。</li>
+        </ul>
+      </li>
+    </ul>
+  </>;
+}
+
+export function QuarterSummary() {
+  return <div className="quarter-summary-list">
+    <SummaryDocument title="OGV市场本季判断" contentId="quarter-summary-ogv"><OgvSummaryContent /></SummaryDocument>
+    <SummaryDocument title="AI 内容本季判断" contentId="quarter-summary-ai"><AiSummaryContent /></SummaryDocument>
   </div>;
 }

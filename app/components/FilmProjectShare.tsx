@@ -59,7 +59,7 @@ export function FilmProjectShare({ filter }: { filter: QuarterFilter }) {
   const { previous, latest } = resolvePeriods(filter);
   return <section className="horizontal-drama-efficiency film-project-share">
     <div className="horizontal-drama-lead"><div className="horizontal-drama-subhead"><span>03</span><h4>单项目份额</h4></div>
-      <EditableInsight lead="B站覆盖面扩大，单项目播放份额同步提升" body="26Q2 院线电影 Top 50 播放 9.79 亿，低于 25Q2 的 10.72 亿；B站有播放的影片由 28 部增至 33 部，按项目播放加权的B站份额由约 9%提升至约 11%。" highlights={["9.79 亿","10.72 亿","28 部增至 33 部","约 9%提升至约 11%"]} storageKey="ogv-market-review:26q2:film-project-share-v1"/>
+      <EditableInsight lead="B站覆盖面扩大" body="单片份额较高的仍为动画电影和海外片。" highlights={["动画电影和海外片"]} storageKey="ogv-market-review:26q2:film-project-share-v1"/>
     </div>
     <div className="film-share-legend">{shareKeys.map((key) => <span key={key}><i style={{ background: shareMeta[key].color }}/>{shareMeta[key].label}</span>)}</div>
     <div className="film-project-layout"><PeriodPanel period={previous} side="previous"/><PeriodPanel period={latest} side="latest"/></div>

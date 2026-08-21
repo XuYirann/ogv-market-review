@@ -132,8 +132,8 @@ export function LongDramaTopSeries() {
   return <section className="top-series-part top-series-part-embedded">
       <div className="horizontal-drama-lead">
         <EditableInsight
-          lead="长剧头部集均播放继续下移，题材从古装爱情向悬疑和现实题材分散"
-          body="26Q2 TOP10 仅 3 部集均 V30 超过 3,000 万，低于 25Q2；爱奇艺与腾讯视频在头部项目中的覆盖更集中。"
+          lead="头部题材观察"
+          body="古偶仍然是基本盘 5/10，但没有超级爆款；TOP2 两部都为主流题材 × 高口碑，悬疑喜剧《低智商犯罪》豆瓣评分 8.2；年代剧《主角》豆瓣评分 8.1。拼播仍然是趋势，TOP10 出现 2 部爱奇艺和腾讯的拼播作品。"
           highlights={["3 部集均 V30 超过 3,000 万", "低于 25Q2"]}
           storageKey="ogv-market-review:26q2:horizontal-drama-top10"
         />
@@ -147,8 +147,8 @@ export function ShortDramaTopSeries() {
   return <section className="top-series-part top-series-part-embedded">
       <div className="horizontal-drama-lead">
         <EditableInsight
-          lead="短剧头部出现单点高集均项目，但播放与分账并不完全同步"
-          body="26Q2《灵魂摆渡·十年》集均 V30 明显领先，其余项目多集中在 130-370 万；分账高位更多来自男频爽剧和都市题材。"
+          lead="26Q2《灵魂摆渡·十年》集均 V30 明显领先"
+          body="其余项目多集中在 130–370 万，与去年比下滑。题材上主要为犯罪、爱情、男频爽剧。"
           highlights={["集均 V30 明显领先", "130-370 万"]}
           storageKey="ogv-market-review:26q2:horizontal-short-drama-top10"
         />

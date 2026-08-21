@@ -162,8 +162,8 @@ export function VarietyTrend() {
       <div className="horizontal-drama-lead">
         <div className="horizontal-drama-subhead"><span>01</span><h4>综艺大盘趋势</h4></div>
         <EditableInsight
-          lead="综艺整体基本横盘，热播综艺回升"
-          body="26Q2 综艺有效播放 67 亿，同比 -1%；其中网络综艺与电视综艺合计 46 亿，同比 +8%。分平台 TOP50 热播综艺播放 46 亿，同比 +8%；腾讯增长 26%，芒果、爱奇艺分别增长 11%、9%，优酷下降 33%。"
+          lead="热播综艺触底平稳，播放小幅回升"
+          body="热播综艺合计 46 亿，同比 +8%。回升主要来自头部综 N 代的播放上涨。"
           highlights={["67 亿", "-1%", "46 亿", "+8%", "增长 26%", "增长 11%、9%", "下降 33%"]}
           storageKey="ogv-market-review:26q2:variety-trend-v1"
         />

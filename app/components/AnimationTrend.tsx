@@ -21,6 +21,68 @@ const legendOrder: Record<ChartKind, string[]> = {
 };
 const pct = (current: number, previous: number) => previous ? `${current >= previous ? "+" : ""}${((current / previous - 1) * 100).toFixed(0)}%` : "–";
 
+type ComicOverlapKind = "bilibili" | "kuaikan";
+const comicOverlapData = {
+  periods: ["2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06"],
+  bilibili: { core: "哔哩哔哩漫画", red: [76, 77, 81, 85, 88, 89], coreLabels: [24, 23, 18, 15, 12, 11], overlap: [.4, .5, .4, .4, .4, .4], users: [11.90, 14.76, 13.69, 13.24, 16.84, 19.80] },
+  kuaikan: { core: "快看漫画", red: [72, 75, 79, 83, 86, 88], coreLabels: [27, 25, 20, 16, 14, 11], overlap: [1.0, 1.0, .8, .8, .9, .8], users: [29.02, 31.00, 26.22, 26.84, 40.29, 41.23] },
+};
+
+function ComicOverlapChart({ kind }: { kind: ComicOverlapKind }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    const source = comicOverlapData[kind];
+    const chart = echarts.init(ref.current, undefined, { renderer: "svg" });
+    const layoutSpec = { left: 42, right: 18, top: 34, bottom: 68, variant: "plain" as const, minRight: 18 };
+    const coreValues = source.red.map((value, index) => 100 - value - source.overlap[index]);
+    chart.setOption({
+      animationDuration: 420,
+      tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
+      grid: getChartLayout(ref.current.clientWidth, layoutSpec).grid,
+      legend: { bottom: 14, data: ["红果免费漫剧独占", "重合", `${source.core}独占`], itemWidth: 11, itemHeight: 11, textStyle: { color: "#58615b", fontSize: 10 } },
+      xAxis: { type: "category", data: comicOverlapData.periods, axisTick: { show: false }, axisLine: { lineStyle: { color: "#aeb7b0" } }, axisLabel: { color: "#66736b", fontSize: 10, margin: 13 } },
+      yAxis: { type: "value", min: 0, max: 100, interval: 20, axisLabel: { color: "#7b8780", fontSize: 9, formatter: "{value}%" }, splitLine: { lineStyle: { color: "#e4e7e4" } } },
+      series: [
+        { name: "红果免费漫剧独占", type: "bar", stack: "total", data: source.red, barMaxWidth: 58, itemStyle: { color: "#e66757" }, label: { show: true, position: "inside", color: "#fff", fontSize: 11, fontWeight: 700, formatter: "{c}%" } },
+        { name: "重合", type: "bar", stack: "total", data: source.overlap, barMaxWidth: 58, itemStyle: { color: "#648ce0" }, label: { show: false } },
+        { name: `${source.core}独占`, type: "bar", stack: "total", data: coreValues, barMaxWidth: 58, itemStyle: { color: "#5eb16e" }, label: { show: true, position: "inside", color: "#fff", fontSize: 11, fontWeight: 700, formatter: ({ dataIndex }: { dataIndex: number }) => `${source.coreLabels[dataIndex]}%` } },
+      ],
+    });
+    const drawLabels = () => {
+      const graphics = comicOverlapData.periods.map((_, index) => {
+        const point = chart.convertToPixel({ xAxisIndex: 0, yAxisIndex: 0 }, [index, source.red[index] + source.overlap[index] / 2]);
+        if (!Array.isArray(point)) return null;
+        return { id: `comic-overlap-${kind}-${index}`, type: "text", silent: true, z: 100, style: { x: point[0], y: point[1], text: `${source.users[index].toFixed(2)}万 / ${source.overlap[index].toFixed(1)}%`, fill: "#648ce0", font: "700 10px sans-serif", textAlign: "center", textVerticalAlign: "middle", backgroundColor: "#fbfcf9", borderColor: "#648ce0", borderWidth: 1, borderRadius: 2, padding: [2, 3] } };
+      }).filter(Boolean);
+      chart.setOption({ graphic: graphics }, { replaceMerge: ["graphic"], silent: true });
+    };
+    requestAnimationFrame(drawLabels);
+    const observer = new ResizeObserver(() => ref.current && resizeResponsiveChart(chart, ref.current, layoutSpec, drawLabels));
+    observer.observe(ref.current);
+    return () => { observer.disconnect(); chart.dispose(); };
+  }, [kind]);
+  return <div ref={ref} className="animation-comic-overlap-chart" role="img" aria-label={kind === "bilibili" ? "红果漫剧与哔哩哔哩漫画用户重合度" : "红果漫剧与快看漫画用户结构"} />;
+}
+
+function AnimationComicOverlap() {
+  return <section className="animation-comic-overlap-section">
+    <div className="horizontal-drama-lead">
+      <EditableInsight
+        lead="从用户重合情况看，漫剧对动画核心用户的直接分流相对有限"
+        body="以B漫、快看漫画用户作为核心二次元人群代表，红果免费漫剧对该人群的渗透率较低，重合用户占比不足1%。"
+        highlights={["直接分流相对有限", "重合用户占比不足1%"]}
+        storageKey="ogv-market-review:26q2:animation-comic-overlap-v1"
+      />
+    </div>
+    <div className="animation-comic-overlap-grid">
+      <article className="horizontal-drama-panel"><header><h5>红果漫剧 vs 哔哩哔哩漫画用户重合度</h5></header><ComicOverlapChart kind="bilibili" /></article>
+      <article className="horizontal-drama-panel"><header><h5>红果漫剧 vs 快看漫画用户结构</h5></header><ComicOverlapChart kind="kuaikan" /></article>
+    </div>
+    <p className="horizontal-drama-source animation-source">注：独占人数 = 活跃用户数 − 重合人数；占比按两产品活跃用户并集计算。</p>
+  </section>;
+}
+
 type VvTier = ">1kw" | "100-1kw" | "<100w";
 type VvRankingItem = { period: string; name: string; value: number; tier: VvTier };
 const vvTiers: VvTier[] = [">1kw", "100-1kw", "<100w"];
@@ -54,8 +116,8 @@ function VvRankingModule() {
   return <section className="animation-vv-followup">
     <div className="horizontal-drama-lead">
       <EditableInsight
-        lead="头部供给数量稳定，但档内差距依然显著"
-        body="26Q2 与 25Q2 均有 3 部新作进入千万级集均播放，但头部第一名与同档其他作品仍存在明显断层；腰部作品更加集中，长尾项目数量较多。"
+        lead="玄幻、奇幻是新作主要题材；长线 IP 续作占据新作主力，纯新 IP 难突围"
+        body="新作中还是稳定能产生头部爆款，26Q2 与 25Q2 均有 3 部千万级播放新作，但腰尾部内容水位持续下降。"
         highlights={["均有 3 部", "明显断层", "长尾项目数量较多"]}
         storageKey="ogv-market-review:26q2:animation-vv-ranking-v1"
       />
@@ -134,8 +196,8 @@ function Top50Module() {
     <div className="horizontal-drama-lead">
       <div className="horizontal-drama-subhead"><span>03</span><h4>国创 TOP50 下拆</h4></div>
       <EditableInsight
-        lead="TOP50 播放继续收缩，头部集中度逆势提升"
-        body="26Q2 国创长片 TOP50 有效播放 64.8 亿，同比下降 20%；其中 TOP10 播放 41.0 亿，同比下降 15%，降幅小于 11–50 名的 28%，TOP10 占比提升至 63%。腾讯视频仍贡献 43.9 亿，但同比下降 32%；B站与优酷分别增至 11.9 亿和 7.1 亿。"
+        lead="TOP50 国创长片有效播放跌幅超大盘，同比 -20% vs 国创大盘同比 -12%"
+        body="进一步下拆发现下滑主要由 TOP11–50 内容贡献，国创用户消费进一步向少数长线头部内容集中。分平台看，腾讯头部老作播放下滑，新进榜多为腰尾部，内容补位不足；B站《凡人修仙传》《牧神记》持续增长，但其他头部内容播放水位下降；优酷头部内容池相比去年明显扩容，《光阴之外》等多部内容进入 TOP50，长线 IP《沧元图》《师兄啊师兄》播放也大幅提升。"
         highlights={["64.8 亿", "下降 20%", "41.0 亿", "下降 15%", "28%", "提升至 63%", "43.9 亿", "下降 32%", "11.9 亿", "7.1 亿"]}
         storageKey="ogv-market-review:26q2:animation-top50-v1"
       />
@@ -332,12 +394,13 @@ export function AnimationTrend() {
       <article className="horizontal-drama-panel"><header><h5>byQ 分平台国创有效播放（亿）</h5></header><AnimationChart kind="chinese" filter={filter} /></article>
     </div>
     <p className="horizontal-drama-source animation-source">注：云和数据对爱优腾存在高估、对 B 站存在低估，B 站播放已用站内数据修正；仅包括爱优腾B站 5 分钟以上内容；数据来源：{data.source}。</p>
+    <AnimationComicOverlap />
     <section className="animation-new-release-section">
       <div className="horizontal-drama-lead">
         <div className="horizontal-drama-subhead"><span>02</span><h4>国创长片新作下拆</h4></div>
         <EditableInsight
-          lead="国创新作播放回落，腾讯贡献进一步集中"
-          body="26Q2 国创长片新作有效播放 6.3 亿，同比下降 24%；腾讯视频贡献 5.2 亿，占比 82%，是主要播放来源。B站新作播放降至 0.7 亿，同比下降 82%。同期全网新片供给 27 部，腾讯独播 16 部，独播供给显著领先。"
+          lead="国创新作播放回落，腾讯贡献进一步提升"
+          body="26Q2 国创长片新作腾讯视频贡献 5.2 亿，占比 82%，是主要播放来源。B站新作播放降至 0.7 亿，同比下降 82%。同期全网新片供给 27 部，腾讯独播 16 部，独播供给显著领先。"
           highlights={["6.3 亿", "下降 24%", "5.2 亿", "占比 82%", "0.7 亿", "下降 82%", "27 部", "独播 16 部"]}
           storageKey="ogv-market-review:26q2:animation-new-release-v1"
         />

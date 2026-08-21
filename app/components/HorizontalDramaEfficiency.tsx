@@ -69,7 +69,7 @@ function SplitMetricChart({ metric, filter }: { metric: EfficiencyKey; filter: Q
 
 export function HorizontalDramaEfficiency({ filter }: { filter: QuarterFilter }) {
   return <section className="horizontal-drama-efficiency"><div className="horizontal-drama-lead"><div className="horizontal-drama-subhead"><span>02</span><h4>热播横屏长剧下拆</h4></div>
-    <EditableInsight lead="腰尾部播放跌得更多，头部单剧效率也在下降" body="26Q2 TOP50 上新长剧播放 152 亿，同比下降 15%；TOP10 下降 5%，11–50 下降 24%。平均集数基本没变，但 TOP10 集均 V30 下降 20%，说明头部内容的单剧效率也明显下滑；11–50 集均 V30 仍维持低位。" highlights={["152 亿", "下降 15%", "下降 5%", "下降 24%", "下降 20%", "维持低位"]} storageKey="ogv-market-review:26q2:horizontal-drama-efficiency" /></div>
+    <EditableInsight lead="用户继续流失" body="26Q2 热播剧播放 152 亿（-15%），TOP10 长剧集均 V30 下降 20%。" highlights={["152 亿", "-15%", "下降 20%"]} storageKey="ogv-market-review:26q2:horizontal-drama-efficiency" /></div>
     <div className="efficiency-layout"><article className="horizontal-drama-panel efficiency-primary"><header><h5>TOP50 上新长剧播放结构（亿）</h5></header><ConcentrationChart filter={filter} /></article><div className="efficiency-side"><article className="horizontal-drama-panel"><header><h5>平均集数｜TOP10 / 11–50</h5></header><SplitMetricChart metric="episodes" filter={filter} /></article><article className="horizontal-drama-panel"><header><h5>集均 V30｜TOP10 / 11–50（万）</h5></header><SplitMetricChart metric="v30" filter={filter} /></article></div></div>
     <LongDramaTopSeries />
   </section>;

@@ -78,8 +78,8 @@ export function VarietyTopSeries() {
     <div className="horizontal-drama-subhead"><span>02</span><h4>TOP10 综艺对比</h4></div>
     <div className="horizontal-drama-lead">
       <EditableInsight
-        lead="TOP10 播放下滑，但头部更集中"
-        body="26Q2 TOP10 综艺有效播放合计 26.2 亿，同比下降 9%；《哈哈哈哈哈第6季》单季播放 8.9 亿，占 TOP10 的 34%，较去年同期头部集中度继续提高。榜单仍以综 N 代为主，唯一新综艺《奋斗吧人生-演员篇》进入 TOP10，但播放仅 0.8 亿。"
+        lead="头部综艺热度更加集中"
+        body="《五哈第6季》单季播放 8.9 亿，占 TOP10 的 34%，较去年同期头部集中度继续提高。榜单仍以综 N 代为主，唯一新综艺《奋斗吧人生-演员篇》为演技综艺，无模式创新，且播放仅 0.8 亿。"
         highlights={["26.2 亿", "下降 9%", "8.9 亿", "34%", "唯一新综艺", "0.8 亿"]}
         storageKey="ogv-market-review:26q2:variety-top10-v1"
       />
