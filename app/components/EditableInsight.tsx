@@ -4,6 +4,10 @@ import { useEffect, useRef } from "react";
 
 const htmlStoragePrefix = "html:v1:";
 
+function isPublishedGitHubPage() {
+  return window.location.hostname.endsWith(".github.io");
+}
+
 function sanitizeInsightHtml(editor: HTMLElement) {
   const output = document.createElement("div");
   const appendNode = (node: Node, parent: HTMLElement) => {
@@ -58,6 +62,10 @@ export function EditableInsight({
   const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // The published report must always reflect the versioned repository source.
+    // Keep browser-only drafts for local/Codex previews, where they can be edited
+    // without stale values overriding a later GitHub deployment.
+    if (isPublishedGitHubPage()) return;
     const saved = window.localStorage.getItem(storageKey);
     if (!saved || !editorRef.current) return;
     if (saved.startsWith(htmlStoragePrefix)) {
@@ -69,6 +77,7 @@ export function EditableInsight({
   }, [storageKey]);
 
   const save = (editor: HTMLElement) => {
+    if (isPublishedGitHubPage()) return;
     window.localStorage.setItem(storageKey, `${htmlStoragePrefix}${sanitizeInsightHtml(editor)}`);
   };
 
