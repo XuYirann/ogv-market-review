@@ -3,6 +3,7 @@
 import * as echarts from "echarts";
 import { useEffect, useMemo, useRef, useState } from "react";
 import durationData from "../data/platformAudienceTotalDuration.json";
+import { getChartLayout, resizeResponsiveChart } from "./chartResponsive";
 
 const colors: Record<string, string> = {
   腾讯视频: "#486b9f",
@@ -64,11 +65,14 @@ function StackedDurationChart({
 
   useEffect(() => {
     if (!chartRef.current) return;
-    const chart = echarts.init(chartRef.current, undefined, { renderer: "canvas" });
+    const chart = echarts.init(chartRef.current, undefined, { renderer: "svg" });
+    const layoutSpec = { left: 58, right: 176, top: 42, bottom: 58, variant: "end-label" as const, minRight: 176 };
+    const totals = visibleData.periods.map((_, periodIndex) => visibleData.series.reduce((sum, series) => sum + Number(series.values[periodIndex] ?? 0), 0));
+    const latestQuarter = durationData.periods.at(-1)?.slice(-2);
     chart.setOption({
       animationDuration: 420,
       color: visibleData.series.map((series) => colors[series.name]),
-      grid: { left: 58, right: 176, top: 42, bottom: 58 },
+      grid: getChartLayout(chartRef.current.clientWidth, layoutSpec).grid,
       tooltip: {
         trigger: "axis",
         backgroundColor: "rgba(27, 32, 29, .94)",
@@ -96,7 +100,7 @@ function StackedDurationChart({
         splitLine: { lineStyle: { color: "#e2e6e2" } },
       },
       dataZoom: [{ type: "inside", zoomOnMouseWheel: "shift", moveOnMouseMove: true }],
-      series: visibleData.series.map((series) => {
+      series: [...visibleData.series.map((series) => {
         const source = durationData.series.find((item) => item.name === series.name);
         const yoy = source ? yoyAt(source.values, endIndex) : null;
         const yoyLabel = yoy == null ? "-" : `${yoy > 0 ? "+" : ""}${yoy.toFixed(0)}%`;
@@ -117,15 +121,40 @@ function StackedDurationChart({
             distance: 8,
             formatter: () => `{platform|${series.name}}  {yoy|${yoyLabel}}`,
             rich: {
-              platform: { color: colors[series.name], fontSize: 11, fontWeight: 650 },
-              yoy: { color: yoy != null && yoy < 0 ? "#c74337" : "#161917", fontSize: 11, fontWeight: 650 },
+              platform: { color: colors[series.name], fontSize: 12, fontWeight: 650 },
+              yoy: { color: yoy != null && yoy < 0 ? "#c74337" : "#161917", fontSize: 12, fontWeight: 650 },
             },
           },
           labelLayout: { moveOverlap: "shiftY" },
         };
-      }),
+      }), {
+        name: "合计",
+        type: "line",
+        data: totals,
+        showSymbol: false,
+        silent: true,
+        z: 30,
+        lineStyle: { opacity: 0 },
+        itemStyle: { opacity: 0 },
+        markPoint: {
+          silent: true,
+          symbol: "circle",
+          symbolSize: 2,
+          itemStyle: { color: "transparent" },
+          label: {
+            show: true,
+            position: "top",
+            distance: 4,
+            color: "#263038",
+            fontSize: 9,
+            fontWeight: 700,
+            formatter: ({ value }: { value: number }) => Number(value).toFixed(0),
+          },
+          data: visibleData.periods.flatMap((period, dataIndex) => period.endsWith(latestQuarter ?? "") ? [{ coord: [period, totals[dataIndex]], value: totals[dataIndex] }] : []),
+        },
+      }],
     });
-    const observer = new ResizeObserver(() => chart.resize());
+    const observer = new ResizeObserver(() => chartRef.current && resizeResponsiveChart(chart, chartRef.current, layoutSpec));
     observer.observe(chartRef.current);
     return () => { observer.disconnect(); chart.dispose(); };
   }, [endIndex, visibleData]);

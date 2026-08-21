@@ -4,6 +4,7 @@ import * as echarts from "echarts";
 import { useEffect, useMemo, useRef, useState } from "react";
 import data from "../data/filmBoxOffice.json";
 import { EditableInsight } from "./EditableInsight";
+import { getChartLayout, resizeResponsiveChart } from "./chartResponsive";
 
 type Preset = "1" | "3" | "custom";
 
@@ -17,21 +18,23 @@ export function FilmBoxOffice() {
   const rawEndIndex = data.periods.indexOf(endPeriod);
   const endIndex = rawEndIndex < startIndex ? lastIndex : rawEndIndex;
   const view = useMemo(() => ({ periods: data.periods.slice(startIndex, endIndex + 1), values: data.values.slice(startIndex, endIndex + 1) }), [endIndex, startIndex]);
+  const latestQuarter = data.periods[lastIndex].slice(-2);
 
   useEffect(() => {
     if (!chartRef.current) return;
-    const chart = echarts.init(chartRef.current);
+    const chart = echarts.init(chartRef.current, undefined, { renderer: "svg" });
+    const layoutSpec = { left: 50, right: 22, top: 38, bottom: 42, variant: "plain" as const };
     chart.setOption({
       animationDuration: 420,
-      grid: { left: 50, right: 22, top: 38, bottom: 42 },
+      grid: getChartLayout(chartRef.current.clientWidth, layoutSpec).grid,
       tooltip: { trigger: "axis", axisPointer: { type: "shadow" }, valueFormatter: (value: number) => `${Number(value).toFixed(1)} 亿` },
       xAxis: { type: "category", data: view.periods, axisTick: { show: false }, axisLine: { lineStyle: { color: "#aeb7b0" } }, axisLabel: { color: "#737c76", fontSize: 10, interval: 0 } },
       yAxis: { type: "value", name: "票房（亿）", nameTextStyle: { color: "#5f6862", fontSize: 10 }, axisLabel: { color: "#737c76", fontSize: 9 }, splitLine: { lineStyle: { color: "#e4e7e4" } } },
-      series: [{ name: "院线电影票房", type: "bar", data: view.values, barMaxWidth: 44, itemStyle: { color: "#9eb3c9" }, label: { show: true, position: "top", distance: 6, color: "#263038", fontSize: 10, fontWeight: 650, formatter: ({ value }: { value: number }) => value.toFixed(0) } }],
+      series: [{ name: "院线电影票房", type: "bar", data: view.values, barMaxWidth: 44, itemStyle: { color: ({ dataIndex }: { dataIndex: number }) => view.periods[dataIndex].endsWith(latestQuarter) ? "#385577" : "#9eb3c9" }, label: { show: true, position: "top", distance: 6, color: "#263038", fontSize: 10, fontWeight: 650, formatter: ({ value }: { value: number }) => value.toFixed(0) } }],
     });
-    const observer = new ResizeObserver(() => chart.resize()); observer.observe(chartRef.current);
+    const observer = new ResizeObserver(() => chartRef.current && resizeResponsiveChart(chart, chartRef.current, layoutSpec)); observer.observe(chartRef.current);
     return () => { observer.disconnect(); chart.dispose(); };
-  }, [view]);
+  }, [latestQuarter, view]);
 
   const setRange = (years: 1 | 3) => {
     const quarters = years * 4;

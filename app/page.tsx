@@ -3,10 +3,9 @@ import { DauChart, MauChart } from "./components/DauChart";
 import { EditableInsight } from "./components/EditableInsight";
 import { DurationStackedCharts } from "./components/DurationStackedCharts";
 import { AudienceOverlapChart } from "./components/AudienceOverlapChart";
-import { ShortDramaRevenueCharts } from "./components/ShortDramaRevenueCharts";
-import { QuarterSummary } from "./components/QuarterSummary";
-import { audienceQuarterContent, durationQuarterContent, overlapQuarterContent, shortDramaRevenueQuarterContent } from "./content/26Q2";
+import { audienceQuarterContent, durationQuarterContent, overlapQuarterContent } from "./content/26Q2";
 import { CategoryFramework } from "./components/CategoryFramework";
+import { RevenueStructureSection } from "./components/RevenueStructureSection";
 
 export const dynamic = "force-static";
 
@@ -16,11 +15,9 @@ export const metadata: Metadata = {
 };
 
 const sections = [
-  { id: "summary", index: "总览", label: "本季判断" },
-  { id: "audience", index: "01", label: "平台" },
+  { id: "audience", index: "01", label: "用户量" },
   { id: "attention", index: "02", label: "时长格局" },
   { id: "revenue", index: "03", label: "收入结构" },
-  { id: "short-drama-revenue", index: "04", label: "短漫剧收入" },
 ];
 
 const categorySections = [
@@ -52,23 +49,15 @@ const modules = [
     question: "免费模式与付费模式如何重塑市场规模？",
     visuals: ["市场收入趋势", "付费/免费收入结构"],
   },
-  {
-    id: "short-drama-revenue",
-    index: "04",
-    title: "短漫剧收入",
-    visuals: ["IAA & IAP 平台收入", "真人与 AI 短剧收入"],
-  },
 ];
 
 function ModuleSection({ module }: { module: (typeof modules)[number] }) {
   const isAudience = module.id === "audience";
   const isDuration = module.id === "attention";
-  const isShortDramaRevenue = module.id === "short-drama-revenue";
-  const isUnderConstruction = module.id === "revenue";
+  const isUnderConstruction = false;
   const audienceInsight = audienceQuarterContent.insights[0];
   const durationInsight = durationQuarterContent.insights[0];
   const overlapInsight = overlapQuarterContent.insights[0];
-  const shortDramaRevenueInsight = shortDramaRevenueQuarterContent.insights[0];
 
   return (
     <section id={module.id} className="report-section">
@@ -84,8 +73,8 @@ function ModuleSection({ module }: { module: (typeof modules)[number] }) {
       {!isUnderConstruction && isAudience && <div className="audience-analysis-group">
         <EditableInsight lead={audienceInsight.lead} body={audienceInsight.body} highlights={audienceInsight.highlights} />
         <div className="audience-charts">
-          <DauChart />
           <MauChart />
+          <DauChart />
         </div>
       </div>}
 
@@ -99,12 +88,7 @@ function ModuleSection({ module }: { module: (typeof modules)[number] }) {
         <DurationStackedCharts />
       </div>}
 
-      {isShortDramaRevenue && <div className="short-revenue-analysis-group">
-        <EditableInsight lead={shortDramaRevenueInsight.lead} body={shortDramaRevenueInsight.body} highlights={shortDramaRevenueInsight.highlights} storageKey="ogv-market-review:26q2:short-drama-revenue-insight" />
-        <ShortDramaRevenueCharts />
-      </div>}
-
-      {!isUnderConstruction && !isDuration && !isShortDramaRevenue && <div className="module-grid">
+      {!isUnderConstruction && !isDuration && <div className="module-grid">
         {!isAudience && <article className="chart-shell chart-primary">
           <div className="chart-header">
             <div>
@@ -190,11 +174,6 @@ export default function Home() {
         </aside>
 
         <div className="report">
-          <section id="summary" className="quarter-summary">
-            <div className="quarter-summary-heading"><span>26Q2</span><h1>本季判断</h1></div>
-            <QuarterSummary />
-          </section>
-
           <section id="overview" className="hero">
             <div className="hero-copy">
               <p className="eyebrow">PART 01</p>
@@ -202,7 +181,7 @@ export default function Home() {
             </div>
           </section>
 
-          {modules.map((module) => <ModuleSection key={module.id} module={module} />)}
+          {modules.map((module) => module.id === "revenue" ? <RevenueStructureSection key={module.id} /> : <ModuleSection key={module.id} module={module} />)}
 
           <CategoryFramework />
 

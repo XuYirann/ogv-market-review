@@ -17,8 +17,11 @@ export type BracketComparison = {
   labelYShift?: number;
   labelY?: number;
   arrowOffset?: number;
+  barHalfWidth?: number;
   title?: string;
   swatchColor?: string;
+  legendWidth?: number;
+  legendRightInset?: number;
 };
 
 export function setBracketAnnotations(chart: echarts.ECharts, comparisons: BracketComparison[]) {
@@ -44,7 +47,10 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
     const bubbleWidth = Math.max(36, item.label.length * (labelFontSize * .92) + 14);
     const trendColor = item.label.includes("+") ? "#161917" : "#c74337";
     if (item.variant === "sideLabel") {
-      const labelX = Math.min(chart.getWidth() - 88, chart.getWidth() - 102 + (item.xOffset ?? 0));
+      const sideLegendFontSize = 12;
+      const legendWidth = item.legendWidth ?? 96;
+      const rightInset = item.legendRightInset ?? 6;
+      const labelX = Math.max(4, chart.getWidth() - legendWidth - rightInset + (item.xOffset ?? 0));
       const labelY = item.labelY ?? current[1] + (item.labelYShift ?? 0);
       graphics.push({
         id: `comparison-${index}`,
@@ -54,15 +60,15 @@ export function setBracketAnnotations(chart: echarts.ECharts, comparisons: Brack
         z: 100,
         children: [
           { type: "rect", shape: { x: labelX, y: labelY - 14, width: 9, height: 9 }, style: { fill: item.swatchColor ?? color } },
-          { type: "text", style: { x: labelX + 16, y: labelY - 10, text: item.title ?? "", fill: item.swatchColor ?? "#33403a", font: "600 9px sans-serif", textAlign: "left", textVerticalAlign: "middle" } },
-          { type: "text", style: { x: labelX + 16, y: labelY + 7, text: item.label, fill: trendColor, font: `600 ${labelFontSize}px sans-serif`, textAlign: "left", textVerticalAlign: "middle" } },
+          { type: "text", style: { x: labelX + 16, y: labelY - 10, text: item.title ?? "", fill: item.swatchColor ?? "#33403a", font: `600 ${sideLegendFontSize}px sans-serif`, textAlign: "left", textVerticalAlign: "middle" } },
+          { type: "text", style: { x: labelX + 16, y: labelY + 7, text: item.label, fill: trendColor, font: `600 ${sideLegendFontSize}px sans-serif`, textAlign: "left", textVerticalAlign: "middle" } },
         ],
       });
       return;
     }
     if (item.variant === "barCallout") {
       const labelY = current[1] + (item.labelYShift ?? 0);
-      const barEdgeX = current[0] + 18;
+      const barEdgeX = current[0] + (item.barHalfWidth ?? 18);
       const elbowX = current[0] + (item.arrowOffset ?? 25);
       const labelX = elbowX + 5;
       graphics.push({

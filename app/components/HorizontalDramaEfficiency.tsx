@@ -5,6 +5,8 @@ import { useEffect, useMemo, useRef } from "react";
 import { EditableInsight } from "./EditableInsight";
 import data from "../data/horizontalDramaTrend.json";
 import { setBracketAnnotations } from "./chartBrackets";
+import { LongDramaTopSeries } from "./HorizontalDramaTopSeries";
+import { getChartLayout, resizeResponsiveChart } from "./chartResponsive";
 
 type QuarterFilter = "Q1" | "Q2" | "Q3" | "Q4" | "all";
 type EfficiencyKey = "episodes" | "v30";
@@ -25,8 +27,9 @@ function ConcentrationChart({ filter }: { filter: QuarterFilter }) {
   }, [filter]);
   useEffect(() => {
     if (!ref.current) return;
-    const chart = echarts.init(ref.current); const n = model.periods.length; const compare = filter !== "all" && n > 1;
-    chart.setOption({ animationDuration: 420, grid: { left: 46, right: 146, top: 108, bottom: 34 }, tooltip: { show: false },
+    const chart = echarts.init(ref.current, undefined, { renderer: "svg" }); const n = model.periods.length; const compare = filter !== "all" && n > 1;
+    const layoutSpec = { left: 46, right: 146, top: 54, bottom: 34, variant: "right-legend" as const, minRight: 146 };
+    chart.setOption({ animationDuration: 420, grid: getChartLayout(ref.current.clientWidth, layoutSpec).grid, tooltip: { show: false },
       legend: { show: false },
       xAxis: { type: "category", data: model.periods, axisTick: { show: false }, axisLabel: { interval: filter === "all" ? 3 : 0, fontSize: 10 }, axisLine: { lineStyle: { color: "#aeb7b0" } } },
       yAxis: { type: "value", axisLabel: { fontSize: 10, color: "#737c76" }, splitLine: { lineStyle: { color: "#e4e7e4" } } },
@@ -45,7 +48,7 @@ function ConcentrationChart({ filter }: { filter: QuarterFilter }) {
       ]);
     };
     requestAnimationFrame(draw);
-    const ro = new ResizeObserver(() => { chart.resize(); requestAnimationFrame(draw); }); ro.observe(ref.current); return () => { ro.disconnect(); chart.dispose(); };
+    const ro = new ResizeObserver(() => ref.current && resizeResponsiveChart(chart, ref.current, layoutSpec, () => requestAnimationFrame(draw))); ro.observe(ref.current); return () => { ro.disconnect(); chart.dispose(); };
   }, [filter, model]);
   return <div ref={ref} className="efficiency-chart efficiency-chart-large" role="img" aria-label="TOP50上新长剧播放集中度" />;
 }
@@ -53,7 +56,7 @@ function ConcentrationChart({ filter }: { filter: QuarterFilter }) {
 function SplitMetricChart({ metric, filter }: { metric: EfficiencyKey; filter: QuarterFilter }) {
   const ref = useRef<HTMLDivElement>(null); const source = data.efficiency[metric];
   const model = useMemo(() => { const idx = filterIndexes(data.efficiency.periods, filter); return { periods: idx.map((x) => x.period), series: source.series.map((s) => ({ ...s, values: idx.map((x) => s.values[x.index]) })) }; }, [filter, source]);
-  useEffect(() => { if (!ref.current) return; const chart = echarts.init(ref.current); const n = model.periods.length;
+  useEffect(() => { if (!ref.current) return; const chart = echarts.init(ref.current, undefined, { renderer: "svg" }); const n = model.periods.length;
     chart.setOption({ animationDuration: 420, title: model.series.map((s, i) => ({ text: s.name, left: i === 0 ? "24%" : "73%", top: 2, textAlign: "center", textStyle: { color: "#33403a", fontSize: 10, fontWeight: 650 } })), grid: [{ left: 36, right: "54%", top: 52, bottom: 30 }, { left: "55%", right: 14, top: 52, bottom: 30 }], tooltip: { show: false },
       xAxis: model.series.map((_, i) => ({ type: "category", gridIndex: i, data: model.periods, axisTick: { show: false }, axisLabel: { interval: filter === "all" ? 3 : 0, fontSize: 8 }, axisLine: { lineStyle: { color: "#aeb7b0" } } })), yAxis: model.series.map((_, i) => ({ type: "value", gridIndex: i, axisLabel: { fontSize: 8, color: "#737c76" }, splitLine: { lineStyle: { color: "#e4e7e4" } } })),
       series: model.series.map((s, i) => ({ name: s.name, type: "bar", xAxisIndex: i, yAxisIndex: i, data: s.values, barMaxWidth: 24, itemStyle: { color: colors[s.name as keyof typeof colors] }, label: { show: true, position: "top", fontSize: 8, formatter: ({ value }: { value: number }) => metric === "episodes" ? value.toFixed(0) : value.toLocaleString(undefined, { maximumFractionDigits: 0 }) } })) });
@@ -68,5 +71,6 @@ export function HorizontalDramaEfficiency({ filter }: { filter: QuarterFilter })
   return <section className="horizontal-drama-efficiency"><div className="horizontal-drama-lead"><div className="horizontal-drama-subhead"><span>02</span><h4>横屏长剧 top 50 下拆</h4></div>
     <EditableInsight lead="腰尾部播放跌得更多，头部单剧效率也在下降" body="26Q2 TOP50 上新长剧播放 152 亿，同比下降 15%；TOP10 下降 5%，11–50 下降 24%。平均集数基本没变，但 TOP10 集均 V30 下降 20%，说明头部内容的单剧效率也明显下滑；11–50 集均 V30 仍维持低位。" highlights={["152 亿", "下降 15%", "下降 5%", "下降 24%", "下降 20%", "维持低位"]} storageKey="ogv-market-review:26q2:horizontal-drama-efficiency" /></div>
     <div className="efficiency-layout"><article className="horizontal-drama-panel efficiency-primary"><header><h5>TOP50 上新长剧播放结构（亿）</h5></header><ConcentrationChart filter={filter} /></article><div className="efficiency-side"><article className="horizontal-drama-panel"><header><h5>平均集数｜TOP10 / 11–50</h5></header><SplitMetricChart metric="episodes" filter={filter} /></article><article className="horizontal-drama-panel"><header><h5>集均 V30｜TOP10 / 11–50（万）</h5></header><SplitMetricChart metric="v30" filter={filter} /></article></div></div>
+    <LongDramaTopSeries />
   </section>;
 }
