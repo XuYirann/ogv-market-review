@@ -3,6 +3,7 @@
 import * as echarts from "echarts";
 import { useEffect, useRef } from "react";
 import overlapData from "../data/platformAudienceOverlap.json";
+import { getChartLayout, resizeResponsiveChart } from "./chartResponsive";
 
 const colors: Record<string, string> = {
   "爱腾独家MAU": "#7c9fc4",
@@ -27,13 +28,13 @@ export function AudienceOverlapChart() {
 
   useEffect(() => {
     if (!chartRef.current) return;
-    const chart = echarts.init(chartRef.current, undefined, { renderer: "canvas" });
-    const lastIndex = overlapData.periods.length - 1;
+    const chart = echarts.init(chartRef.current, undefined, { renderer: "svg" });
+    const layoutSpec = { left: 72, right: 210, top: 46, bottom: 58, variant: "wide-right-legend" as const, minRight: 210 };
     const totals = overlapData.periods.map((_, index) => overlapData.series.reduce((sum, series) => sum + series.values[index], 0));
     chart.setOption({
       animationDuration: 420,
       color: order.map((name) => colors[name]),
-      grid: { left: 72, right: 210, top: 46, bottom: 58 },
+      grid: getChartLayout(chartRef.current.clientWidth, layoutSpec).grid,
       tooltip: {
         trigger: "axis",
         axisPointer: { type: "shadow", shadowStyle: { color: "rgba(32, 49, 72, .045)" } },
@@ -62,7 +63,6 @@ export function AudienceOverlapChart() {
       },
       series: order.map((name) => {
         const series = overlapData.series.find((item) => item.name === name)!;
-        const change = changeAt(series.values, lastIndex);
         return {
           name,
           type: "bar",
@@ -102,7 +102,7 @@ export function AudienceOverlapChart() {
         z: 20,
       }]),
     });
-    const observer = new ResizeObserver(() => chart.resize());
+    const observer = new ResizeObserver(() => chartRef.current && resizeResponsiveChart(chart, chartRef.current, layoutSpec));
     observer.observe(chartRef.current);
     return () => { observer.disconnect(); chart.dispose(); };
   }, []);

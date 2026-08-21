@@ -1,10 +1,26 @@
 "use client";
 
 import data from "../data/documentaryRanking.json";
+import platformData from "../data/documentaryPlatforms.json";
 import { EditableInsight } from "./EditableInsight";
 
 type Rank = number | null;
 export type DocumentaryQuarter = keyof typeof data.comparisons;
+const platformLogos: Record<string, string> = {
+  爱奇艺: "/platform-logos/iqiyi.png",
+  腾讯视频: "/platform-logos/tencent-video.png",
+  芒果TV: "/platform-logos/mango-tv.png",
+  优酷: "/platform-logos/youku.png",
+  B站: "/platform-logos/bilibili.png",
+  央视频: "/platform-logos/cctv-video.png",
+};
+
+function DocumentaryPlatforms({ name }: { name: string }) {
+  const platforms = (platformData as Record<string, string[]>)[name] ?? [];
+  return <span className="documentary-platforms" role="cell">{platforms.map((platform) => (
+    <img key={platform} src={platformLogos[platform]} alt={platform} title={platform} />
+  ))}</span>;
+}
 
 const countHeat = (count: number) => ({
   backgroundColor: `rgb(78 123 104 / ${count === 0 ? 0.04 : 0.1 + count / 8 * 0.54})`,
@@ -48,12 +64,13 @@ export function DocumentaryRanking({ quarter }: { quarter: DocumentaryQuarter })
       <div className="documentary-table-wrap">
         <div className="documentary-module-title"><h4>纪录片月度 TOP10 题材扫描</h4><span>{comparison.previousQuarter} vs {quarter}</span></div>
         <div className="documentary-table" role="table" aria-label={`${quarter} 纪录片月度排名，按题材分组并对比去年同期`}>
-          <div className="documentary-period-bands" aria-hidden="true"><span /><span /><b>{comparison.previousQuarter}</b><b>{quarter}</b><span /></div>
+          <div className="documentary-period-bands" aria-hidden="true"><span /><span /><b>{comparison.previousQuarter}</b><b>{quarter}</b><span /><span /></div>
           <div className="documentary-row documentary-head" role="row">
             <span role="columnheader">题材</span><span role="columnheader">名称</span>
             {comparison.months.map((month) => <span role="columnheader" key={`previous-${month}`}>{month}排名</span>)}
             {comparison.months.map((month) => <span role="columnheader" key={`current-${month}`}>{month}排名</span>)}
             <span role="columnheader">本季上榜次数</span>
+            <span role="columnheader">播出平台</span>
           </div>
           {comparison.groups.map((group) => (
             <div className={`documentary-group documentary-group-${group.status}`} key={group.genre}>
@@ -69,6 +86,7 @@ export function DocumentaryRanking({ quarter }: { quarter: DocumentaryQuarter })
                   {project.previousRanks.map((rank, index) => <span className="documentary-rank documentary-rank-previous" role="cell" style={rankHeat(rank as Rank, "previous")} key={`previous-${project.name}-${index}`}>{rank ?? "—"}</span>)}
                   {project.currentRanks.map((rank, index) => <span className="documentary-rank" role="cell" style={rankHeat(rank as Rank, "current")} key={`current-${project.name}-${index}`}>{rank ?? "—"}</span>)}
                   <strong className="documentary-appearances" role="cell">{project.appearances}</strong>
+                  <DocumentaryPlatforms name={project.name} />
                 </div>
               ))}
             </div>

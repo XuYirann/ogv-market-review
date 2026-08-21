@@ -24,7 +24,7 @@ const platformLogos: Record<string, string> = {
 };
 
 const long25: LongSeries[] = [
-  { name: "藏海传", v30: 4351, genre: "古装 × 奇幻", platforms: ["优酷"] },
+  { name: "藏海传", v30: 4351, genre: "古装 × 男频逆袭", platforms: ["优酷"] },
   { name: "折腰", v30: 3266, genre: "古装 × 爱情", platforms: ["腾讯视频"] },
   { name: "临江仙", v30: 3239, genre: "古装 × 爱情", platforms: ["爱奇艺"] },
   { name: "无忧渡", v30: 2812, genre: "古装 × 爱情", platforms: ["爱奇艺"] },
@@ -94,7 +94,7 @@ function PlatformLogos({ platforms }: { platforms: string[] }) {
 function LongQuarter({ quarter, rows }: { quarter: string; rows: LongSeries[] }) {
   const max = Math.max(...long25.map((row) => row.v30), ...long26.map((row) => row.v30));
   return <article className="top-series-quarter">
-    <h6>{quarter}</h6>
+    <h6>{quarter} TOP10</h6>
     <div className="top-series-grid top-series-grid-long top-series-grid-head"><span>剧名</span><span>集均 V30（万）</span><span>内容题材</span><span>播出平台</span></div>
     {rows.map((row) => <div className="top-series-grid top-series-grid-long top-series-row" key={`${quarter}-${row.name}`}>
       <span className="top-series-name">{row.name}</span>
@@ -112,7 +112,7 @@ function ShortQuarter({ quarter, rows }: { quarter: string; rows: ShortSeries[] 
     ...short26.map((row) => typeof row.revenue === "number" ? row.revenue : 0),
   );
   return <article className="top-series-quarter">
-    <h6>{quarter}</h6>
+    <h6>{quarter} TOP10</h6>
     <div className="top-series-grid top-series-grid-short top-series-grid-head"><span>剧名</span><span>集均 V30（万）</span><span>内容题材</span><span>分账金额（万）</span></div>
     {rows.map((row) => <div className="top-series-grid top-series-grid-short top-series-row" key={`${quarter}-${row.name}`}>
       <span className="top-series-name">{row.name}</span>
@@ -128,12 +128,8 @@ function ShortQuarter({ quarter, rows }: { quarter: string; rows: ShortSeries[] 
   </article>;
 }
 
-export function HorizontalDramaTopSeries() {
-  return <section className="horizontal-drama-efficiency horizontal-drama-top-series">
-    <div className="horizontal-drama-subhead"><span>04</span><h4>TOP 剧集对比</h4></div>
-
-    <section className="top-series-part">
-      <h5><span>-</span> 横屏长剧 TOP10</h5>
+export function LongDramaTopSeries() {
+  return <section className="top-series-part top-series-part-embedded">
       <div className="horizontal-drama-lead">
         <EditableInsight
           lead="长剧头部集均播放继续下移，题材从古装爱情向悬疑和现实题材分散"
@@ -143,10 +139,11 @@ export function HorizontalDramaTopSeries() {
         />
       </div>
       <div className="top-series-evidence"><div className="top-series-quarters"><LongQuarter quarter="25Q2" rows={long25} /><LongQuarter quarter="26Q2" rows={long26} /></div></div>
-    </section>
+    </section>;
+}
 
-    <section className="top-series-part">
-      <h5><span>-</span> 横屏短剧 TOP10</h5>
+export function ShortDramaTopSeries() {
+  return <section className="top-series-part top-series-part-embedded">
       <div className="horizontal-drama-lead">
         <EditableInsight
           lead="短剧头部出现单点高集均项目，但播放与分账并不完全同步"
@@ -156,6 +153,5 @@ export function HorizontalDramaTopSeries() {
         />
       </div>
       <div className="top-series-evidence"><div className="top-series-quarters"><ShortQuarter quarter="25Q2" rows={short25} /><ShortQuarter quarter="26Q2" rows={short26} /></div></div>
-    </section>
-  </section>;
+    </section>;
 }

@@ -12,10 +12,48 @@ import {
 
 const storageKey = "ogv-market-review:26Q2:quarter-summary-markdown-v2";
 
-const normalizeStrongBoundaries = (value: string) =>
-  value.replace(/(\*\*[^*\n]+?\*\*)(?=[\p{L}\p{N}])/gu, "$1 ");
+const normalizeSummaryMarkdown = (value: string) => {
+  let nestedNumberDepth = 0;
 
-const defaultMarkdown = normalizeStrongBoundaries(`## 平台整体
+  return value
+    .replace(/\r\n?/g, "\n")
+    .split("\n")
+    .map((sourceLine) => {
+      let line = sourceLine
+        .replace(/[\u200B-\u200D\uFEFF]/g, "")
+        .replace(/\\\*\\\*/g, "**")
+        .replace(/\*\*[ \t]+(?=\S)/g, "**")
+        .replace(/(?<=\S)[ \t]+\*\*(?=[ \t]*$)/g, "**")
+        .replace(/(\*\*[^*\n]+?\*\*)(?=[\p{L}\p{N}])/gu, "$1 ");
+      const heading = line.match(/^\s*(?:#{1,6}\s*)?(?:\*{1,2})?\s*(平台整体|分品类)\s*(?:\*{1,2})?\s*[：:]?\s*$/u);
+
+      if (heading) {
+        nestedNumberDepth = 0;
+        return `## ${heading[1]}`;
+      }
+
+      // Word/富文本粘贴常把 a.、b.、i. 变成普通段落。这里仅重编码行首编号，正文保持原样。
+      const manualSubItem = line.match(/^\s*(i{1,3}|[a-z])[.、]\s+(.+)$/iu);
+      if (manualSubItem) {
+        const isRomanSubItem = /^i{1,3}$/iu.test(manualSubItem[1]);
+        nestedNumberDepth = isRomanSubItem ? 2 : 1;
+        return `${isRomanSubItem ? "      " : "   "}1. ${manualSubItem[2]}`;
+      }
+
+      const manualNumber = line.match(/^(\d+)[.、]\s+(.+)$/u);
+      if (manualNumber && nestedNumberDepth === 2) {
+        return `         1. ${manualNumber[2]}`;
+      }
+
+      if (manualNumber) nestedNumberDepth = 0;
+      if (!line.trim()) nestedNumberDepth = 0;
+      return line;
+    })
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n");
+};
+
+const defaultMarkdown = normalizeSummaryMarkdown(`## 平台整体
 
 1. **长视频平台的用户与时长继续收缩，短剧对用户注意力的替代从“增量补充”进入“格局逆转”。**
    1. **红果在用户规模上完成全面反超：**26Q2 红果免费短剧 MAU **3.68 亿（同比 +74%）**、DAU **1.57 亿（+106%）**，均超过腾讯视频的 3.19 亿（-12%）和 5051 万（-25%）；红果 DAU 已达到腾讯视频的 **3.1 倍**，腾讯、爱奇艺 DAU 均降至 2018 年以来最低。
@@ -38,10 +76,11 @@ const defaultMarkdown = normalizeStrongBoundaries(`## 平台整体
 export function QuarterSummary() {
   const [markdown, setMarkdown] = useState(defaultMarkdown);
   const [ready, setReady] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const storedMarkdown = window.localStorage.getItem(storageKey);
-    const savedMarkdown = normalizeStrongBoundaries(storedMarkdown || defaultMarkdown);
+    const savedMarkdown = normalizeSummaryMarkdown(storedMarkdown || defaultMarkdown);
     if (storedMarkdown && storedMarkdown !== savedMarkdown) {
       window.localStorage.setItem(storageKey, savedMarkdown);
     }
@@ -54,16 +93,18 @@ export function QuarterSummary() {
   }, []);
 
   const update = (value: string) => {
-    setMarkdown(value);
-    window.localStorage.setItem(storageKey, value);
+    const normalized = normalizeSummaryMarkdown(value);
+    setMarkdown(normalized);
+    window.localStorage.setItem(storageKey, normalized);
   };
 
-  return <div className="quarter-summary-document">
-    <div className="quarter-summary-toolbar">
-      <p>直接编辑 · 选中文字后按 ⌘/Ctrl + B 切换加粗</p>
-    </div>
-    {ready
-      ? <MDXEditor
+  return <div className={`quarter-summary-document${expanded ? " is-expanded" : " is-collapsed"}`}>
+    <button className="quarter-summary-toggle" type="button" aria-expanded={expanded} aria-controls="quarter-summary-content" onClick={() => setExpanded((value) => !value)}>
+      <span>{expanded ? "收起全文" : "展开查看完整判断"}</span><b aria-hidden="true">{expanded ? "−" : "+"}</b>
+    </button>
+    {expanded && <div id="quarter-summary-content" className="quarter-summary-content">
+      {ready
+        ? <MDXEditor
               className="quarter-summary-editor"
               contentEditableClassName="quarter-summary-editor-content"
               markdown={markdown}
@@ -76,6 +117,7 @@ export function QuarterSummary() {
                 markdownShortcutPlugin(),
               ]}
             />
-      : <div className="quarter-summary-editor-loading" aria-label="正在载入本季判断" />}
+        : <div className="quarter-summary-editor-loading" aria-label="正在载入本季判断" />}
+    </div>}
   </div>;
 }

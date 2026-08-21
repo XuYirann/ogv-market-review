@@ -89,7 +89,7 @@ const categories: Category[] = [
   },
 ];
 
-const underConstruction = new Set(["animation"]);
+const underConstruction = new Set<string>();
 
 export function CategoryFramework() {
   const [documentaryQuarter, setDocumentaryQuarter] = useState<DocumentaryQuarter>("26Q2");
@@ -113,11 +113,12 @@ export function CategoryFramework() {
 
             <div className="category-flow">
               {category.id === "horizontal-drama" && <HorizontalDramaTrend />}
+              {category.id === "animation" && <AnimationTrend />}
               {category.id === "variety" && <VarietyTrend />}
               {category.id === "film" && <FilmTrend />}
               {category.id === "documentary" && <DocumentaryRanking quarter={documentaryQuarter} />}
               {underConstruction.has(category.id) && <div className="category-under-construction" role="img" aria-label="建设中">🚧</div>}
-              {category.modules.map((module, index) => underConstruction.has(category.id) || category.id === "variety" || category.id === "horizontal-drama" || category.id === "film" || category.id === "documentary" ? null : (
+              {category.modules.map((module, index) => underConstruction.has(category.id) || category.id === "animation" || category.id === "variety" || category.id === "horizontal-drama" || category.id === "film" || category.id === "documentary" ? null : (
                 <section key={module.title} className="category-module">
                   <div className="category-module-heading">
                     <span>{String(index + 1).padStart(2, "0")}</span>
@@ -133,7 +134,7 @@ export function CategoryFramework() {
               ))}
             </div>
 
-            {category.id !== "variety" && category.id !== "horizontal-drama" && category.id !== "film" && category.id !== "documentary" && !underConstruction.has(category.id) && <footer className="category-data-footer">
+            {category.id !== "animation" && category.id !== "variety" && category.id !== "horizontal-drama" && category.id !== "film" && category.id !== "documentary" && !underConstruction.has(category.id) && <footer className="category-data-footer">
               <strong>待接数据</strong>
               <div>{category.sources.map((source) => <span key={source}>{source}</span>)}</div>
             </footer>}
@@ -144,6 +145,7 @@ export function CategoryFramework() {
   );
 }
 import { HorizontalDramaTrend } from "./HorizontalDramaTrend";
+import { AnimationTrend } from "./AnimationTrend";
 import { VarietyTrend } from "./VarietyTrend";
 import { FilmTrend } from "./FilmTrend";
 import { DocumentaryQuarterSelect, DocumentaryRanking, type DocumentaryQuarter } from "./DocumentaryRanking";

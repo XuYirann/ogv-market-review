@@ -1,12 +1,13 @@
 "use client";
 
 import * as echarts from "echarts";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import data from "../data/shortDramaRevenue.json";
 import { setBracketAnnotations, type BracketComparison } from "./chartBrackets";
+import { getChartLayout, resizeResponsiveChart } from "./chartResponsive";
 
 type Row = { period: string; [key: string]: string | number };
-type QuarterFilter = "Q1" | "Q2" | "Q3" | "Q4" | "all";
+export type QuarterFilter = "Q1" | "Q2" | "Q3" | "Q4" | "all";
 
 const colors: Record<string, string> = {
   抖音: "#385577",
@@ -18,16 +19,17 @@ const colors: Record<string, string> = {
 const pct = (current: number, previous: number) => previous ? `${current >= previous ? "+" : ""}${((current / previous - 1) * 100).toFixed(0)}%` : "–";
 const total = (row: Row, keys: string[]) => keys.reduce((sum, key) => sum + Number(row[key] || 0), 0);
 
-function RevenueChart({ rows, keys, compact = false, annual = false, ariaLabel }: { rows: Row[]; keys: string[]; compact?: boolean; annual?: boolean; ariaLabel: string }) {
+function RevenueChart({ rows, keys, compact = false, annual = false, showPlatformYoy = false, ariaLabel }: { rows: Row[]; keys: string[]; compact?: boolean; annual?: boolean; showPlatformYoy?: boolean; ariaLabel: string }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!ref.current) return;
-    const chart = echarts.init(ref.current);
+    const chart = echarts.init(ref.current, undefined, { renderer: "svg" });
+    const layoutSpec = { left: compact ? 34 : 38, right: compact ? 86 : showPlatformYoy ? 104 : 20, top: compact ? 58 : 78, bottom: 28, variant: compact || showPlatformYoy ? "right-legend" as const : "plain" as const, minRight: compact ? 86 : showPlatformYoy ? 104 : 20 };
     const totals = rows.map((row) => total(row, keys));
     chart.setOption({
       animationDuration: 420,
       tooltip: { trigger: "axis", axisPointer: { type: "shadow" }, valueFormatter: (value: number) => `${Number(value).toFixed(1)} 亿` },
-      grid: { left: compact ? 34 : 38, right: compact ? 86 : 20, top: compact ? 58 : 78, bottom: 28 },
+      grid: getChartLayout(ref.current.clientWidth, layoutSpec).grid,
       xAxis: { type: "category", data: rows.map((row) => row.period), axisTick: { show: false }, axisLine: { lineStyle: { color: "#aeb7b0" } }, axisLabel: { color: "#59625c", fontSize: compact ? 9 : 10, interval: 0 } },
       yAxis: { type: "value", name: "亿", nameTextStyle: { color: "#737c76", fontSize: 9 }, axisLabel: { color: "#737c76", fontSize: 9 }, splitLine: { lineStyle: { color: "#e5e8e4" } } },
       series: [
@@ -40,12 +42,35 @@ function RevenueChart({ rows, keys, compact = false, annual = false, ariaLabel }
       if (annual && totals.length > 1) {
         comparisons.push({ previousIndex: totals.length - 2, currentIndex: totals.length - 1, previousValue: totals[totals.length - 2], currentValue: totals[totals.length - 1], label: pct(totals[totals.length - 1], totals[totals.length - 2]), targetGap: 28, labelFontSize: 8 });
       }
+      if (showPlatformYoy && rows.length > 1) {
+        const currentIndex = rows.length - 1;
+        const currentPeriod = rows[currentIndex].period;
+        const priorPeriod = `${Number(currentPeriod.slice(0, 2)) - 1}${currentPeriod.slice(2)}`;
+        const previousIndex = Math.max(0, rows.findIndex((row) => row.period === priorPeriod));
+        [...keys].reverse().forEach((key, keyIndex) => {
+          const currentValue = Number(rows[currentIndex][key] || 0);
+          const previousValue = Number(rows[previousIndex][key] || 0);
+          comparisons.push({
+            previousIndex,
+            currentIndex,
+            previousValue: currentValue,
+            currentValue,
+            title: key,
+            label: `同比 ${pct(currentValue, previousValue)}`,
+            variant: "sideLabel",
+            swatchColor: colors[key],
+            labelFontSize: 8,
+            labelY: 90 + keyIndex * 52,
+            xOffset: 12,
+          });
+        });
+      }
       if (compact && totals.length > 1) {
         const currentIndex = totals.length - 1;
         const previousQuarterIndex = currentIndex - 1;
         comparisons.push({ previousIndex: previousQuarterIndex, currentIndex, previousValue: totals[previousQuarterIndex], currentValue: totals[currentIndex], label: pct(totals[currentIndex], totals[previousQuarterIndex]), targetGap: 26, labelFontSize: 8 });
         let cumulative = 0;
-        keys.forEach((key, keyIndex) => {
+        [...keys].reverse().forEach((key, keyIndex) => {
           const currentValue = Number(rows[currentIndex][key] || 0);
           comparisons.push({
             previousIndex: previousQuarterIndex,
@@ -66,10 +91,10 @@ function RevenueChart({ rows, keys, compact = false, annual = false, ariaLabel }
       setBracketAnnotations(chart, comparisons);
     };
     requestAnimationFrame(drawComparisons);
-    const resize = new ResizeObserver(() => { chart.resize(); requestAnimationFrame(drawComparisons); });
+    const resize = new ResizeObserver(() => ref.current && resizeResponsiveChart(chart, ref.current, layoutSpec, () => requestAnimationFrame(drawComparisons)));
     resize.observe(ref.current);
     return () => { resize.disconnect(); chart.dispose(); };
-  }, [annual, compact, keys, rows]);
+  }, [annual, compact, keys, rows, showPlatformYoy]);
   return <div ref={ref} className={compact ? "short-revenue-chart compact" : "short-revenue-chart"} role="img" aria-label={ariaLabel} />;
 }
 
@@ -77,31 +102,29 @@ function LeftRevenueChart({ filter }: { filter: QuarterFilter }) {
   const iap = useMemo(() => (data.iap as Row[]).filter((row) => filter === "all" || row.period.endsWith(filter)), [filter]);
   const iaa = useMemo(() => (data.iaa as Row[]).filter((row) => filter === "all" || row.period.endsWith(filter)), [filter]);
   return <div className="short-revenue-left-plots">
-    <div><h6>IAP 付费短剧 C 端付费规模</h6><RevenueChart rows={iap} keys={["抖音", "其他平台"]} annual={filter !== "all"} ariaLabel="IAP付费短剧平台收入" /></div>
-    <div><h6>IAA 免费短剧平台广告收入</h6><RevenueChart rows={iaa} keys={["抖音", "红果", "其他平台"]} annual={filter !== "all"} ariaLabel="IAA免费短剧平台广告收入" /></div>
+    <div><h6>IAP 付费短剧 C 端付费规模</h6><RevenueChart rows={iap} keys={["抖音", "其他平台"]} annual={filter !== "all"} showPlatformYoy ariaLabel="IAP付费短剧平台收入" /></div>
+    <div><h6>IAA 免费短剧平台广告收入</h6><RevenueChart rows={iaa} keys={["抖音", "红果", "其他平台"]} annual={filter !== "all"} showPlatformYoy ariaLabel="IAA免费短剧平台广告收入" /></div>
   </div>;
 }
 
-export function ShortDramaRevenueCharts() {
-  const [filter, setFilter] = useState<QuarterFilter>("Q2");
+export function ShortDramaPlatformRevenueCharts({ filter }: { filter: QuarterFilter }) {
+  return <article className="short-revenue-module short-platform-revenue-module">
+    <section className="short-revenue-card short-revenue-primary">
+      <header><h3>短剧平台 IAA &amp; IAP 收入（亿元）</h3></header>
+      <LeftRevenueChart filter={filter} />
+    </section>
+    <p className="short-revenue-source">数据来源：{data.source}。平台收入为按平台收到用户／广告主收入估算，不代表短剧公司投流规模。</p>
+  </article>;
+}
+
+export function LiveAiRevenueCharts() {
   const liveAction = (data.liveAction as Row[]).filter((row) => row.period >= "25Q1");
   const ai = (data.ai as Row[]).filter((row) => row.period >= "25Q1");
-  return <article className="short-revenue-module">
-    <div className="short-revenue-layout">
-      <section className="short-revenue-card short-revenue-primary">
-        <header><h3>IAA &amp; IAP 短剧平台收入（亿）</h3>
-          <div className="short-revenue-filter" aria-label="选择季度">{(["Q1", "Q2", "Q3", "Q4", "all"] as QuarterFilter[]).map((quarter) => <button key={quarter} type="button" className={filter === quarter ? "selected" : ""} onClick={() => setFilter(quarter)}>{quarter === "all" ? "全部" : quarter}</button>)}</div>
-        </header>
-        <LeftRevenueChart filter={filter} />
-        <div className="short-revenue-shared-legend" aria-label="平台图例">
-          {["抖音", "红果", "其他平台"].map((key) => <span key={key}><i style={{ backgroundColor: colors[key] }} />{key}</span>)}
-        </div>
-      </section>
-      <div className="short-revenue-side">
-        <section className="short-revenue-card"><header><h3>真人短剧收入（亿）</h3></header><RevenueChart rows={liveAction} keys={["抖音", "红果", "其他"]} compact ariaLabel="真人短剧收入趋势" /></section>
-        <section className="short-revenue-card"><header><h3>AI 短剧收入（亿）</h3></header><RevenueChart rows={ai} keys={["抖音", "红果", "其他"]} compact ariaLabel="AI短剧收入趋势" /></section>
-      </div>
+  return <article className="short-revenue-module live-ai-revenue-module">
+    <div className="short-revenue-side">
+      <section className="short-revenue-card"><header><h3>真人短剧收入（亿元）</h3></header><RevenueChart rows={liveAction} keys={["抖音", "红果", "其他"]} compact ariaLabel="真人短剧收入趋势" /></section>
+      <section className="short-revenue-card"><header><h3>AI 短剧收入（亿元）</h3></header><RevenueChart rows={ai} keys={["抖音", "红果", "其他"]} compact ariaLabel="AI短剧收入趋势" /></section>
     </div>
-    <p className="short-revenue-source">数据来源：{data.source}。平台收入为按平台收到用户／广告主收入估算，不代表短剧公司投流规模。</p>
+    <p className="short-revenue-source">数据来源：{data.source}</p>
   </article>;
 }

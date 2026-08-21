@@ -6,6 +6,7 @@ import data from "../data/varietyTrend.json";
 import { EditableInsight } from "./EditableInsight";
 import { type BracketComparison, setBracketAnnotations } from "./chartBrackets";
 import { VarietyTopSeries } from "./VarietyTopSeries";
+import { getChartLayout, resizeResponsiveChart } from "./chartResponsive";
 
 type QuarterFilter = "Q1" | "Q2" | "Q3" | "Q4" | "all";
 type ChartKind = "total" | "platform";
@@ -22,6 +23,7 @@ const colors: Record<string, string> = {
 
 const formatPercent = (value: number | null) => value == null ? "—" : `${value > 0 ? "+" : ""}${value.toFixed(0)}%`;
 const yoy = (current: number, previous: number) => previous ? (current / previous - 1) * 100 : null;
+const displayName = (name: string) => ({ "电视综艺": "热播电视综艺", "网络综艺": "热播网络综艺", "其他综艺": "其他综艺" }[name] ?? name);
 
 function VarietyStackedChart({ kind, quarterFilter }: { kind: ChartKind; quarterFilter: QuarterFilter }) {
   const chartRef = useRef<HTMLDivElement>(null);
@@ -37,7 +39,8 @@ function VarietyStackedChart({ kind, quarterFilter }: { kind: ChartKind; quarter
 
   useEffect(() => {
     if (!chartRef.current) return;
-    const chart = echarts.init(chartRef.current);
+    const chart = echarts.init(chartRef.current, undefined, { renderer: "svg" });
+    const layoutSpec = { left: 46, right: kind === "total" ? 38 : 158, top: 62, bottom: 66, variant: kind === "total" ? "plain" as const : "wide-right-legend" as const, minRight: kind === "total" ? 38 : 158 };
     const totals = periods.map((_, index) => series.reduce((sum, item) => sum + Number(item.values[index] ?? 0), 0));
     const latestIndex = periods.length - 1;
     const previousIndex = periods.length - 2;
@@ -49,15 +52,15 @@ function VarietyStackedChart({ kind, quarterFilter }: { kind: ChartKind; quarter
     chart.setOption({
       animationDuration: 420,
       color: series.map((item) => colors[item.name]),
-      grid: { left: 46, right: kind === "total" ? 104 : 158, top: 62, bottom: 66 },
+      grid: getChartLayout(chartRef.current.clientWidth, layoutSpec).grid,
       tooltip: { show: false },
       legend: {
         show: kind === "total",
         bottom: 12,
-        data: series.map((item) => item.name),
+        data: [...series].reverse().map((item) => displayName(item.name)),
         itemWidth: 10,
         itemHeight: 10,
-        textStyle: { color: "#58615b", fontSize: 10 },
+        textStyle: { color: "#58615b", fontSize: 12 },
       },
       xAxis: {
         type: "category",
@@ -73,7 +76,7 @@ function VarietyStackedChart({ kind, quarterFilter }: { kind: ChartKind; quarter
       },
       series: [
         ...series.map((item) => ({
-          name: item.name,
+          name: displayName(item.name),
           type: "bar" as const,
           stack: "total",
           data: item.values,
@@ -123,7 +126,7 @@ function VarietyStackedChart({ kind, quarterFilter }: { kind: ChartKind; quarter
           },
         );
       } else {
-        const legendOrder = ["芒果TV", "爱奇艺", "腾讯视频", "优酷"];
+        const legendOrder = ["芒果TV", "优酷", "腾讯视频", "爱奇艺"];
         const legendRows = [92, 162, 232, 302];
         legendOrder.forEach((name, legendIndex) => {
           const item = series.find((entry) => entry.name === name);
@@ -144,7 +147,7 @@ function VarietyStackedChart({ kind, quarterFilter }: { kind: ChartKind; quarter
     };
 
     requestAnimationFrame(drawAnnotations);
-    const observer = new ResizeObserver(() => { chart.resize(); requestAnimationFrame(drawAnnotations); });
+    const observer = new ResizeObserver(() => chartRef.current && resizeResponsiveChart(chart, chartRef.current, layoutSpec, () => requestAnimationFrame(drawAnnotations)));
     observer.observe(chartRef.current);
     return () => { observer.disconnect(); chart.dispose(); };
   }, [kind, periods, quarterFilter, series]);
@@ -175,11 +178,11 @@ export function VarietyTrend() {
       </div>
       <div className="horizontal-drama-charts asymmetric-platform-charts variety-charts">
         <article className="horizontal-drama-panel">
-          <header><div><h5>byQ 综艺有效播放（亿）</h5><span>热播综艺 = 网络综艺 + 电视综艺</span></div></header>
+          <header><div><h5>byQ 综艺有效播放（亿）</h5></div></header>
           <VarietyStackedChart kind="total" quarterFilter={quarterFilter} />
         </article>
         <article className="horizontal-drama-panel">
-          <header><h5>byQ 分平台 TOP50 热播综艺播放（亿）</h5></header>
+          <header><h5>byQ 分平台热播综艺播放（亿）</h5></header>
           <VarietyStackedChart kind="platform" quarterFilter={quarterFilter} />
         </article>
       </div>

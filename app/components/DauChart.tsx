@@ -4,6 +4,7 @@ import * as echarts from "echarts";
 import { useEffect, useMemo, useRef, useState } from "react";
 import dauData from "../data/platformAudienceDau.json";
 import mauData from "../data/platformAudienceMau.json";
+import { getChartLayout, resizeResponsiveChart } from "./chartResponsive";
 
 type AudienceData = typeof dauData;
 
@@ -29,17 +30,10 @@ const platformOrder = [
   "河马剧场",
 ];
 
-const defaultPlatforms = platformOrder;
-
 function shiftMonths(period: string, months: number) {
   const [year, month] = period.split("-").map(Number);
   const date = new Date(year, month - 1 - months, 1);
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-}
-
-function formatValue(value: number | null) {
-  if (value == null) return "-";
-  return value >= 1 ? value.toFixed(2) : value.toFixed(2);
 }
 
 function yoyAt(series: (number | null)[], index: number) {
@@ -56,7 +50,6 @@ function AudienceTrendChart({ data, showHint = true }: { data: AudienceData; sho
   const [startPeriod, setStartPeriod] = useState(shiftMonths(lastPeriod, 59));
   const [endPeriod, setEndPeriod] = useState(lastPeriod);
   const [rangePreset, setRangePreset] = useState<string>("5");
-  const [activePlatforms, setActivePlatforms] = useState(defaultPlatforms);
 
   const startIndex = Math.max(0, data.periods.indexOf(startPeriod));
   const endIndexRaw = data.periods.indexOf(endPeriod);
@@ -67,9 +60,7 @@ function AudienceTrendChart({ data, showHint = true }: { data: AudienceData; sho
     const orderedSeries = platformOrder
       .map((name) => data.series.find((item) => item.name === name))
       .filter((item): item is (typeof data.series)[number] => item != null);
-    const series = orderedSeries
-      .filter((item) => activePlatforms.includes(item.name))
-      .map((item) => {
+    const series = orderedSeries.map((item) => {
         let started = false;
         const values = item.values.slice(startIndex, endIndex + 1).map((value) => {
           if (!started && value === 0) return null;
@@ -79,15 +70,16 @@ function AudienceTrendChart({ data, showHint = true }: { data: AudienceData; sho
         return { ...item, values };
       });
     return { periods, series };
-  }, [activePlatforms, data, endIndex, startIndex]);
+  }, [data, endIndex, startIndex]);
 
   useEffect(() => {
     if (!chartRef.current) return;
-    const chart = echarts.init(chartRef.current, undefined, { renderer: "canvas" });
+    const chart = echarts.init(chartRef.current, undefined, { renderer: "svg" });
+    const layoutSpec = { left: 50, right: 152, top: 42, bottom: 68, variant: "end-label" as const, minRight: 152 };
     const option: echarts.EChartsOption = {
       animationDuration: 420,
       color: visibleData.series.map((item) => colors[item.name]),
-      grid: { left: 50, right: 152, top: 42, bottom: 68, containLabel: false },
+      grid: { ...getChartLayout(chartRef.current.clientWidth, layoutSpec).grid, containLabel: false },
       tooltip: {
         trigger: "axis",
         backgroundColor: "rgba(27, 32, 29, .94)",
@@ -146,8 +138,8 @@ function AudienceTrendChart({ data, showHint = true }: { data: AudienceData; sho
             distance: 7,
             formatter: () => `{platform|${item.name}}  {yoy|${yoyLabel}}`,
             rich: {
-              platform: { color: colors[item.name], fontSize: 11, fontWeight: 650 },
-              yoy: { color: yoy != null && yoy < 0 ? "#c74337" : "#161917", fontSize: 11, fontWeight: 650 },
+              platform: { color: colors[item.name], fontSize: 12, fontWeight: 650 },
+              yoy: { color: yoy != null && yoy < 0 ? "#c74337" : "#161917", fontSize: 12, fontWeight: 650 },
             },
           },
           labelLayout: { moveOverlap: "shiftY" },
@@ -155,7 +147,7 @@ function AudienceTrendChart({ data, showHint = true }: { data: AudienceData; sho
       }),
     };
     chart.setOption(option);
-    const resizeObserver = new ResizeObserver(() => chart.resize());
+    const resizeObserver = new ResizeObserver(() => chartRef.current && resizeResponsiveChart(chart, chartRef.current, layoutSpec));
     resizeObserver.observe(chartRef.current);
     return () => {
       resizeObserver.disconnect();
@@ -167,14 +159,6 @@ function AudienceTrendChart({ data, showHint = true }: { data: AudienceData; sho
     setEndPeriod(lastPeriod);
     setStartPeriod(shiftMonths(lastPeriod, years * 12 - 1));
     setRangePreset(String(years));
-  };
-
-  const togglePlatform = (platform: string) => {
-    setActivePlatforms((current) =>
-      current.includes(platform)
-        ? current.length === 1 ? current : current.filter((item) => item !== platform)
-        : [...current, platform],
-    );
   };
 
   return (
@@ -195,21 +179,9 @@ function AudienceTrendChart({ data, showHint = true }: { data: AudienceData; sho
         </div>
       </div>
 
-      <div className="series-toggles" aria-label="选择平台">
-        {platformOrder.map((name) => data.series.find((item) => item.name === name)).filter((item): item is (typeof data.series)[number] => item != null).map((item) => {
-          const active = activePlatforms.includes(item.name);
-          return (
-            <button key={item.name} type="button" className={active ? "active" : ""} onClick={() => togglePlatform(item.name)} aria-pressed={active}>
-              <i style={{ backgroundColor: colors[item.name] }} />
-              <span>{item.name}</span>
-            </button>
-          );
-        })}
-      </div>
-
       <div ref={chartRef} className="dau-chart" role="img" aria-label={`${startPeriod}至${endPeriod}各平台${data.metric}趋势图`} />
       <div className="chart-meta">
-        <p className="chart-hint">{showHint ? "悬停查看月度数据；Shift + 滚轮缩放；点击平台显隐。" : "悬停查看月度数据。"}</p>
+        <p className="chart-hint">{showHint ? "悬停查看月度数据；Shift + 滚轮缩放。" : "悬停查看月度数据。"}</p>
         <p className="chart-source">数据来源：{data.source}</p>
       </div>
     </article>

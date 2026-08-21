@@ -5,6 +5,8 @@ import { useEffect, useMemo, useRef } from "react";
 import data from "../data/horizontalDramaTrend.json";
 import { EditableInsight } from "./EditableInsight";
 import { setBracketAnnotations } from "./chartBrackets";
+import { ShortDramaTopSeries } from "./HorizontalDramaTopSeries";
+import { getChartLayout, resizeResponsiveChart } from "./chartResponsive";
 
 type QuarterFilter = "Q1" | "Q2" | "Q3" | "Q4" | "all";
 
@@ -40,7 +42,8 @@ function ShortDramaChart({ kind, filter }: { kind: "total" | "platform"; filter:
 
   useEffect(() => {
     if (!chartRef.current) return;
-    const chart = echarts.init(chartRef.current);
+    const chart = echarts.init(chartRef.current, undefined, { renderer: "svg" });
+    const layoutSpec = { left: 46, right: kind === "total" ? 96 : 152, top: 62, bottom: 46, variant: kind === "total" ? "plain" as const : "wide-right-legend" as const, minRight: kind === "total" ? 96 : 152 };
     const totals = view.periods.map((_, index) => view.series.reduce((sum, item) => sum + Number(item.values[index] ?? 0), 0));
     const latestIndex = view.periods.length - 1;
     const previousIndex = latestIndex - 1;
@@ -49,9 +52,9 @@ function ShortDramaChart({ kind, filter }: { kind: "total" | "platform"; filter:
     chart.setOption({
       animationDuration: 420,
       color: view.series.map((item) => colors[item.name]),
-      grid: { left: 46, right: kind === "total" ? 96 : 152, top: 62, bottom: 46 },
+      grid: getChartLayout(chartRef.current.clientWidth, layoutSpec).grid,
       tooltip: { show: false },
-      legend: { show: kind === "total", bottom: 6, data: view.series.map((item) => item.name), itemWidth: 10, itemHeight: 10, textStyle: { color: "#58615b", fontSize: 10 } },
+      legend: { show: kind === "total", bottom: 6, data: [...view.series].reverse().map((item) => item.name), itemWidth: 10, itemHeight: 10, textStyle: { color: "#58615b", fontSize: 12 } },
       xAxis: { type: "category", data: view.periods, axisTick: { show: false }, axisLine: { lineStyle: { color: "#aeb7b0" } }, axisLabel: { color: "#737c76", fontSize: 10, interval: filter === "all" ? 3 : 0 } },
       yAxis: { type: "value", axisLabel: { color: "#737c76", fontSize: 10 }, splitLine: { lineStyle: { color: "#e4e7e4" } } },
       series: [
@@ -150,7 +153,7 @@ function ShortDramaChart({ kind, filter }: { kind: "total" | "platform"; filter:
     };
 
     requestAnimationFrame(drawAnnotations);
-    const observer = new ResizeObserver(() => { chart.resize(); requestAnimationFrame(drawAnnotations); });
+    const observer = new ResizeObserver(() => chartRef.current && resizeResponsiveChart(chart, chartRef.current, layoutSpec, () => requestAnimationFrame(drawAnnotations)));
     observer.observe(chartRef.current);
     return () => { observer.disconnect(); chart.dispose(); };
   }, [filter, view]);
@@ -183,5 +186,6 @@ export function HorizontalShortDramaTrend({ filter }: { filter: QuarterFilter })
       <article className="horizontal-drama-panel"><header><h5>byQ 分平台 TOP50 上新横屏短剧播放（亿）</h5></header><ShortDramaChart kind="platform" filter={filter} /></article>
     </div>
     <p className="horizontal-drama-source">数据来源：{data.source}</p>
+    <ShortDramaTopSeries />
   </section>;
 }

@@ -7,12 +7,13 @@ import data from "../data/horizontalDramaTrend.json";
 import { HorizontalDramaEfficiency } from "./HorizontalDramaEfficiency";
 import { type BracketComparison, setBracketAnnotations } from "./chartBrackets";
 import { HorizontalShortDramaTrend } from "./HorizontalShortDramaTrend";
-import { HorizontalDramaTopSeries } from "./HorizontalDramaTopSeries";
+import { getChartLayout, resizeResponsiveChart } from "./chartResponsive";
 
 const colors: Record<string, string> = {
   其他: "#d9dfe8", "热播剧 TOP50": "#385577",
   爱奇艺: "#C0D688", 腾讯视频: "#A9BACF", 优酷: "#89D8F0", 芒果TV: "#EDB795", 其他: "#b7beb8",
 };
+const displayName = (name: string) => name === "热播剧 TOP50" ? "上新热播剧" : name === "其他" ? "上新其他剧" : name;
 
 function yoy(values: (number | null)[]) {
   const current = values.at(-1);
@@ -40,7 +41,8 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
 
   useEffect(() => {
     if (!chartRef.current) return;
-    const chart = echarts.init(chartRef.current);
+    const chart = echarts.init(chartRef.current, undefined, { renderer: "svg" });
+    const layoutSpec = { left: 48, right: kind === "total" ? 102 : 152, top: 62, bottom: 68, variant: kind === "total" ? "plain" as const : "wide-right-legend" as const, minRight: kind === "total" ? 102 : 152 };
     const totals = periods.map((_, index) => series.reduce((sum, item) => sum + Number(item.values[index] ?? 0), 0));
     const latestYoy = totals.length > 1 && totals.at(-2) ? (totals.at(-1)! / totals.at(-2)! - 1) * 100 : null;
     const baseValues = series[0]?.values ?? [];
@@ -52,14 +54,14 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
     chart.setOption({
       animationDuration: 420,
       color: series.map((item) => colors[item.name]),
-      grid: { left: 48, right: kind === "total" ? 102 : 152, top: 62, bottom: 68 },
+      grid: getChartLayout(chartRef.current.clientWidth, layoutSpec).grid,
       tooltip: { show: false },
-      legend: { show: kind === "total", bottom: 12, data: series.map((item) => item.name), itemWidth: 10, itemHeight: 10, textStyle: { color: "#58615b", fontSize: 10 } },
+      legend: { show: kind === "total", bottom: 12, data: [...series].reverse().map((item) => displayName(item.name)), itemWidth: 10, itemHeight: 10, textStyle: { color: "#58615b", fontSize: 12 } },
       xAxis: { type: "category", data: periods, axisTick: { show: false }, axisLine: { lineStyle: { color: "#aeb7b0" } }, axisLabel: { color: "#737c76", fontSize: 10, interval: quarterFilter === "all" ? 3 : 0 } },
       yAxis: { type: "value", axisLabel: { color: "#737c76", fontSize: 10 }, splitLine: { lineStyle: { color: "#e4e7e4" } } },
       series: [
-        ...series.map((item, seriesIndex) => ({
-        name: item.name, type: "bar" as const, stack: "total", data: item.values, barMaxWidth: 36,
+        ...series.map((item) => ({
+        name: displayName(item.name), type: "bar" as const, stack: "total", data: item.values, barMaxWidth: 36,
         emphasis: { focus: "series" },
         label: {
           show: true,
@@ -140,7 +142,7 @@ function StackedChart({ kind, quarterFilter }: { kind: "total" | "platform"; qua
       setBracketAnnotations(chart, comparisons);
     };
     requestAnimationFrame(drawAnnotations);
-    const observer = new ResizeObserver(() => { chart.resize(); requestAnimationFrame(drawAnnotations); });
+    const observer = new ResizeObserver(() => chartRef.current && resizeResponsiveChart(chart, chartRef.current, layoutSpec, () => requestAnimationFrame(drawAnnotations)));
     observer.observe(chartRef.current);
     return () => { observer.disconnect(); chart.dispose(); };
   }, [periods, series]);
@@ -169,14 +171,13 @@ export function HorizontalDramaTrend() {
           </button>
         ))}
       </div>
-      <div className="horizontal-drama-charts asymmetric-platform-charts">
+      <div className="horizontal-drama-charts asymmetric-platform-charts long-drama-overview-charts">
         <article className="horizontal-drama-panel"><header><h5>byQ 有效播放（亿）</h5></header><StackedChart kind="total" quarterFilter={quarterFilter} /></article>
         <article className="horizontal-drama-panel"><header><h5>byQ 分平台 TOP50 上新长剧播放（亿）</h5></header><StackedChart kind="platform" quarterFilter={quarterFilter} /></article>
       </div>
       <p className="horizontal-drama-source">数据来源：{data.source}</p>
       <HorizontalDramaEfficiency filter={quarterFilter} />
       <HorizontalShortDramaTrend filter={quarterFilter} />
-      <HorizontalDramaTopSeries />
     </section>
   );
 }
